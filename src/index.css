@@ -1,0 +1,80 @@
+:root {
+  /* Colors - Refined for Anti-Gravity depth */
+  --color-primary: #007AFF;
+  --color-primary-rgb: 0, 122, 255;
+  --color-accent: #FF9500;
+  --color-background-default: rgba(255, 255, 255, 0.7); /* Translucent */
+  --color-background-subtle: rgba(245, 245, 247, 0.4);
+  --color-text-primary: #1C1C1E;
+  --color-text-secondary: #8E8E93;
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-success: #34C759;
+  --color-error: #FF3B30;
+
+  /* Spacing */
+  --space-3xl: 64px;
+  --space-lg: 24px;
+  --space-md: 16px;
+  --space-sm: 8px;
+
+  /* Border Radii */
+  --border-radius-lg: 24px; /* Softer, more organic corners */
+  --border-radius-md: 12px;
+
+  /* Shadows - Layered for "Floating" effect */
+  --shadow-lifted: 0 20px 40px rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.05);
+  --shadow-hover: 0 30px 60px rgba(0,0,0,0.12);
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* We handle scrolling in specific containers */
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--color-text-primary);
+  background: #000; /* Base for the nebula */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The Anti-Gravity Nebula Background */
+.nebula-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background: radial-gradient(circle at 20% 30%, #f0f0f0 0%, #ffffff 50%, #e0e0e0 100%);
+  animation: nebulaFloat 20s infinite alternate ease-in-out;
+  opacity: 0.8;
+}
+
+@keyframes nebulaFloat {
+  0% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.1) translate(-2%, 2%); }
+  100% { transform: scale(1) translate(2%, -2%); }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* PROPORTIONAL SVG SCALING */
+.svg-proportional-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.svg-proportional-container svg {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 100% !important;
+  display: block;
+}

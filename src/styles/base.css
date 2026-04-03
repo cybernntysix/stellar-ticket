@@ -1,0 +1,35 @@
+:root {
+  --color-primary: #007AFF;
+  --color-accent: #FF9500;
+  --color-success: #34C759;
+  --color-danger: #FF3B30;
+  --color-bg-pure: #000000;
+  --color-bg-glass: rgba(255, 255, 255, 0.04);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.6);
+  --color-border: rgba(255, 255, 255, 0.15);
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+}
+
+[data-theme='light'] {
+  --color-bg-pure: #1c1c1e; /* Dark Matte Gray */
+  --color-bg-glass: rgba(255, 255, 255, 0.08);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.7);
+  --color-border: rgba(255, 255, 255, 0.2);
+}
+
+/* GLOBAL RESET */
+* { box-sizing: border-box; }
+
+html, body { 
+  margin: 0; padding: 0; 
+  background: var(--color-bg-pure); 
+  font-family: var(--font-family-base);
+  overflow: hidden;
+  height: 100dvh; /* Dynamic Viewport for Mobile Safari/Chrome */
+  width: 100vw;
+  transition: background 0.5s ease;
+}
+
+.sovereign-os { background: var(--color-bg-pure); height: 100dvh; width: 100vw; position: relative; transition: background 0.5s ease; }

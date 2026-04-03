@@ -1,0 +1,97 @@
+/* COMPONENTS & SHARED UI - PHYSICAL GLASS OVERHAUL */
+
+button.placeholder-button {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  box-sizing: border-box !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(30px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-top: 2px solid rgba(255, 255, 255, 0.5) !important;
+  color: #ffffff !important;
+  padding: 12px 32px !important;
+  border-radius: 100px !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  outline: none !important;
+}
+
+button.placeholder-button:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Secondary Buttons (Close, Ingest) - True Dark Glass */
+button.placeholder-button.secondary {
+  color: #8E8E93 !important;
+  background: rgba(0, 0, 0, 0.4) !important; /* DARKER base to avoid "gray" look */
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+button.placeholder-button.secondary:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Primary Action Buttons (Ship, Blender) - Electric Cyan Glow */
+button.placeholder-button.export-btn {
+  background: rgba(0, 198, 255, 0.15) !important;
+  border-color: rgba(0, 198, 255, 0.3) !important;
+  border-top: 2px solid rgba(0, 198, 255, 0.7) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 30px rgba(0, 198, 255, 0.2) !important;
+}
+
+/* Sidebar Specific Ingest Button Fix */
+.ingest-btn {
+  margin-top: 24px !important;
+  width: 100% !important;
+}
+
+.clean-remove-btn, .clean-add-btn { background: none !important; border: none !important; color: var(--color-primary) !important; font-size: 24px !important; font-weight: 200 !important; cursor: pointer; padding: 0 12px; line-height: 1; transition: transform 0.2s ease; }
+.clean-remove-btn:hover, .clean-add-btn:hover { color: #fff !important; transform: scale(1.2); }
+
+.asset-display-item { aspect-ratio: 1/1; background: rgba(0,0,0,0.2); border-radius: 20px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.asset-display-item img { width: 100%; height: 100%; object-fit: cover; }
+.asset-display-item span { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 10px; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; backdrop-filter: blur(4px); }
+
+.audio-vault-card { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; cursor: pointer; transition: all 0.2s; }
+.audio-name { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.project-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; overflow: hidden; cursor: pointer; display: flex; flex-direction: column; width: 100%; }
+.project-thumb { width: 100%; height: 200px; background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+.project-info { padding: 16px; text-align: center; }
+.project-info h4 { font-size: 13px; font-weight: 800; margin: 0; color: #fff; text-transform: uppercase; letter-spacing: 0.1em; }
+
+.doc-card { display: flex; align-items: center; gap: 16px; padding: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; cursor: pointer; backdrop-filter: blur(10px); color: #fff; }
+.mirror-viewport { background: rgba(0,0,0,0.3); height: 100%; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-size: 12px; letter-spacing: 0.15em; font-weight: 900; }
+
+/* CELESTIAL REFRACTION SYSTEM */
+.glass-panel {
+  position: relative;
+}
+
+.glass-panel::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 100;
+  border: 1.5px solid rgba(255, 255, 255, var(--glare-opacity, 0));
+  box-shadow: 0 0 20px rgba(255, 255, 255, calc(var(--glare-opacity, 0) * 0.5));
+  transition: border-color 0.1s linear, box-shadow 0.1s linear;
+}

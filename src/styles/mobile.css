@@ -1,0 +1,294 @@
+/* MOBILE MOTHERBOARD OVERRIDES (9:16) */
+
+@media (max-width: 768px) {
+  /* HIDE SIDEBAR & HEADER ASSETS */
+  .workspace-sidebar { display: none !important; }
+  .dashboard-header .placeholder-button { display: none !important; }
+  
+  /* FORCE VERTICAL STACK */
+  .dashboard-layout {
+    flex-direction: column;
+    padding-bottom: 80px; /* Space for Bottom Bar */
+  }
+
+  .editor-container {
+    padding: 10px !important;
+    height: 100% !important;
+  }
+
+  /* BENTO GRID REFACTOR */
+  .bento-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    overflow-y: auto !important;
+    padding-bottom: 20px;
+  }
+
+  .bento-forge {
+    height: 50dvh !important; /* Top 50% for the Map */
+    flex-shrink: 0;
+  }
+
+  .bento-insights {
+    height: auto !important;
+    min-height: 300px;
+  }
+
+  .bento-identity-footer {
+    height: auto !important;
+    order: -1; /* Move identity to the top, just below map */
+    margin-bottom: 10px;
+  }
+
+  /* HOME SCREEN: FORGE ONLY ON MOBILE */
+  .is-mobile .bento-insights,
+  .is-mobile .bento-identity-footer {
+    display: none !important;
+  }
+
+  .is-mobile .bento-forge {
+    height: calc(100dvh - 180px) !important; /* Full height minus header/nav */
+    width: 100% !important;
+    flex-grow: 1 !important;
+  }
+
+  /* BOTTOM COMMAND BAR */
+  .bottom-command-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    height: 70px;
+    z-index: 10000;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .nav-item {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .nav-item.active, .nav-item:hover {
+    color: var(--color-primary);
+  }
+
+  .nav-item.accent {
+    color: white;
+    transform: translateY(-5px);
+  }
+
+  .nav-item.accent span { color: var(--color-primary); }
+
+  /* OVERLAY REFACTOR */
+  .composer-overlay {
+    padding: 0 !important;
+  }
+
+  .composer-view {
+    border-radius: 0 !important;
+  }
+
+  .data-blender-layout-redesign {
+    flex-direction: column !important;
+    overflow-y: auto;
+  }
+
+  .blender-col-side {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* VISUAL SUITE MOBILE FIX */
+  .gen-panel .composer-body {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto;
+  }
+
+  .gen-panel .blender-col-main {
+    order: -1; /* Put the canvas at the top */
+    min-height: 400px;
+  }
+
+  .gen-panel .history-list {
+    flex-direction: row !important;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+
+  .gen-panel .history-list .sidebar-btn {
+    min-width: 150px;
+  }
+
+  /* PRESENTATION MODE MOBILE */
+  .presentation-overlay {
+    padding: 0 !important;
+  }
+
+  .presentation-forge {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .presentation-forge h1 {
+    font-size: 24px !important;
+    letter-spacing: 0.1em !important;
+    line-height: 1.2 !important;
+  }
+
+  .presentation-forge h2 {
+    font-size: 24px !important;
+    margin-bottom: 15px !important;
+  }
+
+  .presentation-forge p {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  .presentation-forge .identity-anchor-orb {
+    width: 120px !important;
+    height: 120px !important;
+  }
+
+  /* Ensure detail view fits */
+  .presentation-forge .detail-view-mobile {
+    width: 100% !important;
+    padding: 30px 20px !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 65% !important;
+    background: linear-gradient(to top, black 80%, transparent) !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    z-index: 100 !important;
+  }
+
+  /* ONBOARDING MOBILE FIX */
+  .mission-onboarding-overlay {
+    padding: 5px !important; /* Maximize lateral width */
+  }
+
+  .onboarding-card {
+    padding: 40px 15px !important; /* Vertical space for content, narrow horizontal */
+    border-radius: 20px !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  .onboarding-title {
+    font-size: 32px !important;
+    line-height: 1.1 !important;
+    margin-bottom: 25px !important;
+  }
+
+  .drop-zone-huge {
+    height: 180px !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+  }
+
+  .onboarding-inputs {
+    grid-template-columns: 1fr !important; /* Stack laterally */
+    gap: 15px !important;
+    margin-bottom: 25px !important;
+  }
+
+  .identity-input-field {
+    font-size: clamp(14px, 6vw, 32px) !important; /* Dynamic shrinking based on width */
+    padding: 12px 0 !important;
+  }
+
+  /* PLAYER CARD MOBILE: COMPACT BADGE MODE */
+  .player-card-overlay {
+    padding: 10px !important; /* Eliminate the large side gutters */
+  }
+
+  .player-card-content {
+    padding: 20px 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .player-card-title {
+    font-size: 20px !important; /* Smaller to prevent vertical wrapping */
+    line-height: 1.1 !important;
+    margin-bottom: 20px !important;
+    letter-spacing: 0 !important;
+    max-width: 100% !important; /* Force stretch */
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .card-header {
+    margin-bottom: 25px !important;
+  }
+
+  .domain-pills {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-bottom: 30px !important;
+  }
+
+  .domain-pills div {
+    padding: 6px 15px !important;
+    font-size: 9px !important;
+  }
+
+  .cta-hint {
+    font-size: 8px !important;
+  }
+
+  /* DARKEN BACKGROUND & PANELS */
+  .sovereign-os.is-mobile::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* 50% darker background */
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .is-mobile .bento-box {
+    background-color: rgba(0, 0, 0, 0.4) !important; /* Darker panels */
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+  }
+
+  /* REMOVE PANEL HEADER LINES */
+  .bento-header, 
+  .composer-header,
+  .dashboard-header {
+    border-bottom: none !important;
+  }
+
+  .skip-onboarding-btn {
+    top: 20px !important;
+    right: 20px !important;
+  }
+}
