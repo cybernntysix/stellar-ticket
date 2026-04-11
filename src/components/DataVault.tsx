@@ -4,6 +4,8 @@ import jsPDF from 'jspdf';
 import { useSovereign } from '../context/SovereignContext';
 import NeuralConsole from './NeuralConsole';
 import BlenderControls from './BlenderControls';
+import Tooltip from './Tooltip';
+import { motion } from 'framer-motion';
 
 interface DataVaultProps {
   uploadedAssets: any[];
@@ -20,7 +22,7 @@ const DataVault: React.FC<DataVaultProps> = ({
   sovereignCuration,
   identityStatement 
 }) => {
-  const { BASE_URL } = useSovereign() as any;
+  const { BASE_URL, onboardingStep, setOnboardingStep } = useSovereign() as any;
   const [stagedDocs, setStagedDocs] = useState<any[]>([]);
   const [dataAnalysis, setDataAnalysis] = useState<any>(null);
   const [selectedLens, setSelectedLens] = useState('executive');
@@ -158,14 +160,49 @@ const DataVault: React.FC<DataVaultProps> = ({
   };
 
   if (isMobile) {
+    const isMainOnboarding = [9, 10, 11].includes(onboardingStep);
+
     return (
       <div className="composer-view" style={{ borderRadius: 0, padding: 0 }}>
-        <div className="composer-header" style={{ padding: '0 20px', height: '60px' }}>
-          <h2 className="suite-title" style={{ fontSize: '14px' }}>DATA VAULT</h2>
-          <button className="placeholder-button secondary glass-panel" onClick={onClose} style={{ padding: '8px 15px', fontSize: '10px' }}>CLOSE</button>
+        {isMainOnboarding && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', zIndex: 100, pointerEvents: 'none' }}
+          />
+        )}
+        <div className="composer-header" style={{ padding: '0 20px', height: '60px', zIndex: 101, position: 'relative', background: isMainOnboarding ? 'transparent' : '', borderBottom: isMainOnboarding ? 'none' : '' }}>
+          <h2 className="suite-title" style={{ fontSize: '14px', opacity: isMainOnboarding ? 0.2 : 1 }}>DATA VAULT</h2>
+          <div style={{ position: 'relative' }}>
+            {onboardingStep === 11 && <Tooltip text="This is where you generate insights. Tap CLOSE to exit." position="bottom" style={{ width: '150px' }} />}
+            <button 
+              className="placeholder-button secondary glass-panel" 
+              onClick={() => {
+                if (onboardingStep > 0 && onboardingStep !== 11) return;
+                if (onboardingStep === 11) setOnboardingStep(12);
+                onClose();
+              }} 
+              style={{ padding: '8px 15px', fontSize: '10px', opacity: isMainOnboarding && onboardingStep !== 11 ? 0.2 : 1, cursor: isMainOnboarding && onboardingStep !== 11 ? 'not-allowed' : 'pointer', borderColor: onboardingStep === 11 ? '#FF9500' : '', color: onboardingStep === 11 ? '#FF9500' : '' }}
+            >
+              CLOSE
+            </button>
+            {onboardingStep === 11 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0.2, 0.6, 0.2], scale: [1, 1.2, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                style={{
+                  position: 'absolute', top: -4, left: -4, right: -4, bottom: -4,
+                  border: '2px solid #FF9500', borderRadius: '100px',
+                  boxShadow: '0 0 20px rgba(255, 149, 0, 0.5)', zIndex: -1, pointerEvents: 'none'
+                }}
+              />
+            )}
+          </div>
         </div>
 
-        <div className="composer-body" style={{ height: 'calc(100% - 130px)', overflowY: 'auto', padding: '20px' }}>
+        <div className="composer-body" style={{ height: 'calc(100% - 130px)', overflowY: 'auto', padding: '20px', position: 'relative', zIndex: 10 }}>
           {mobileView === 'insights' && (
             <div className="mobile-insights-main">
               <div className="insight-canvas-large" ref={chartStackRef} style={{ padding: '20px', background: 'transparent', border: 'none' }}>
@@ -201,7 +238,7 @@ const DataVault: React.FC<DataVaultProps> = ({
               <h4 className="tray-title" style={{ marginBottom: '20px' }}>VAULT RECORDS</h4>
               <div className="tray-list" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
                 {(uploadedAssets || []).filter(a => a.name.match(/\.(csv|pdf|txt)$/i)).map((asset, i) => (
-                  <button key={i} className="sidebar-btn" onClick={() => { stageDocument(asset); setMobileView('blender'); }} style={{ textAlign: 'left', padding: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', width: '100%' }}>
+                  <button key={i} className="sidebar-btn" onClick={() => { stageDocument(asset); setMobileView('blender'); }} style={{ textAlign: 'left', padding: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', width: '100%', boxSizing: 'border-box' }}>
                     {asset.name}
                   </button>
                 ))}
@@ -249,23 +286,36 @@ const DataVault: React.FC<DataVaultProps> = ({
         }}>
           <button 
             className={`nav-item ${mobileView === 'vault' ? 'active' : ''}`} 
-            onClick={() => setMobileView('vault')}
-            style={{ flex: 1, background: 'none', border: 'none', color: mobileView === 'vault' ? 'var(--color-primary)' : 'rgba(255,255,255,0.4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', fontSize: '9px', fontWeight: 900 }}
+            onClick={() => {
+              if (onboardingStep > 0 && onboardingStep !== 10) return;
+              if (onboardingStep === 10) setOnboardingStep(11);
+              setMobileView('vault');
+            }}
+            style={{ flex: 1, background: 'none', border: 'none', color: mobileView === 'vault' ? 'var(--color-primary)' : 'rgba(255,255,255,0.4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', fontSize: '9px', fontWeight: 900, position: 'relative', opacity: isMainOnboarding && onboardingStep !== 10 ? 0.2 : 1, cursor: isMainOnboarding && onboardingStep !== 10 ? 'not-allowed' : 'pointer' }}
           >
+            {onboardingStep === 10 && <Tooltip text="These are your insights. Tap VAULT FILES to view imports." position="top" style={{ width: '150px' }} />}
             <span>VAULT FILES</span>
           </button>
           <button 
             className={`nav-item ${mobileView === 'insights' ? 'active' : ''}`} 
-            onClick={() => setMobileView('insights')}
-            style={{ flex: 1, background: 'none', border: 'none', color: mobileView === 'insights' ? 'var(--color-primary)' : 'rgba(255,255,255,0.4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', fontSize: '9px', fontWeight: 900 }}
+            onClick={() => {
+              if (isMainOnboarding) return;
+              setMobileView('insights');
+            }}
+            style={{ flex: 1, background: 'none', border: 'none', color: mobileView === 'insights' ? 'var(--color-primary)' : 'rgba(255,255,255,0.4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', fontSize: '9px', fontWeight: 900, opacity: isMainOnboarding ? 0.2 : 1, cursor: isMainOnboarding ? 'not-allowed' : 'pointer' }}
           >
             <span style={{ fontSize: '12px', color: mobileView === 'insights' ? 'white' : 'inherit' }}>INSIGHTS</span>
           </button>
           <button 
             className={`nav-item ${mobileView === 'blender' ? 'active' : ''}`} 
-            onClick={() => setMobileView('blender')}
-            style={{ flex: 1, background: 'none', border: 'none', color: mobileView === 'blender' ? 'var(--color-primary)' : 'rgba(255,255,255,0.4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', fontSize: '9px', fontWeight: 900 }}
+            onClick={() => {
+              if (onboardingStep > 0 && onboardingStep !== 11) return;
+              if (onboardingStep === 11) setOnboardingStep(12);
+              setMobileView('blender');
+            }}
+            style={{ flex: 1, background: 'none', border: 'none', color: mobileView === 'blender' ? 'var(--color-primary)' : 'rgba(255,255,255,0.4)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', fontSize: '9px', fontWeight: 900, position: 'relative', opacity: isMainOnboarding && onboardingStep !== 11 ? 0.2 : 1, cursor: isMainOnboarding && onboardingStep !== 11 ? 'not-allowed' : 'pointer' }}
           >
+            {onboardingStep === 11 && <Tooltip text="Your files live here. Tap GENERATION to create new insights." position="top" style={{ width: '150px' }} />}
             <span>GENERATION</span>
           </button>
         </div>

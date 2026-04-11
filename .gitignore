@@ -6,3 +6,5 @@ dev.log
 sessionstate/
 .tmp.driveupload/
 backend/models/*.gguf
+public/uploads/
+MISSION/terminal/Trminal Saved Output*

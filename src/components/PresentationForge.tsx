@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSovereign } from '../context/SovereignContext';
 import NeuralConstellation from './NeuralConstellation';
+import Tooltip from './Tooltip';
 
 const PresentationForge: React.FC = () => {
-  const { sovereignCuration, identityStatement } = useSovereign();
+  const { sovereignCuration, identityStatement, onboardingStep, setOnboardingStep } = useSovereign() as any;
   const [zoomLevel, setZoomLevel] = useState<'macro' | 'constellation' | 'depth'>('macro');
   const [activeNode, setActiveNode] = useState<any>(null);
   const [rotation, setRotation] = useState(0);
@@ -19,15 +20,21 @@ const PresentationForge: React.FC = () => {
   }, []);
 
   const handleNodeSelect = (skill: any) => {
+    if (onboardingStep > 0 && onboardingStep !== 4) return;
+    if (onboardingStep === 4) setOnboardingStep(5);
     setActiveNode(skill);
     setZoomLevel('depth');
   };
 
   const resetZoom = () => {
+    if (onboardingStep > 0 && onboardingStep !== 6 && zoomLevel === 'depth') return;
+    if (onboardingStep === 6 && zoomLevel === 'depth') setOnboardingStep(7);
+    
     if (zoomLevel === 'depth') {
       setZoomLevel('constellation');
       setActiveNode(null);
     } else if (zoomLevel === 'constellation') {
+      if (onboardingStep > 0) return; // Prevent zooming all the way out during onboarding if needed
       setZoomLevel('macro');
     }
   };
@@ -108,8 +115,8 @@ const PresentationForge: React.FC = () => {
       </AnimatePresence>
 
       {/* LAYER 1: THE VISUAL PROOF (THE CONSTELLATION) */}
-      <motion.div 
-        animate={{ 
+      <motion.div
+        animate={{
           scale: transform.scale,
           x: transform.x,
           y: transform.y,
@@ -118,8 +125,10 @@ const PresentationForge: React.FC = () => {
         transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
         style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 5 }}
       >
-        <NeuralConstellation 
-          onAudit={handleNodeSelect} 
+        <div style={{ position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 100 }}>
+          {onboardingStep === 4 && zoomLevel === 'constellation' && <Tooltip text="These insights were generated from your data. Tap a node to inspect." position="bottom" style={{ width: '200px' }} />}
+        </div>
+        <NeuralConstellation          onAudit={handleNodeSelect} 
           userDomains={sovereignCuration?.discoveredNodes} 
           suppressDetail={true}
           focusedNodeId={activeNode?.id}
@@ -167,9 +176,17 @@ const PresentationForge: React.FC = () => {
               </motion.h2>
               
               <div style={{ maxWidth: '600px' }}>
-                <div className="dossier-text-section" style={{ margin: isMobile ? '0 0 20px 0' : '0 0 60px 0' }}>
-                  {(() => {
-                    const text = activeNode.description || activeNode.depthSummary || "Synthesizing evidentiary patterns...";
+                <div style={{ position: 'relative' }}>
+                  {onboardingStep === 5 && <Tooltip text="This is the description of your Neural Node. Tap here to continue." position="top" style={{ width: '200px' }} />}
+                  <div 
+                    className="dossier-text-section" 
+                    style={{ margin: isMobile ? '0 0 20px 0' : '0 0 60px 0', cursor: onboardingStep === 5 ? 'pointer' : 'default' }}
+                    onClick={() => {
+                      if (onboardingStep === 5) setOnboardingStep(6);
+                    }}
+                  >
+                    {(() => {
+                    const text = activeNode?.description || activeNode?.depthSummary || "Synthesizing evidentiary patterns...";
                     const bullets = text.split(/[\n\-\*•]\s+/).filter((s: string) => s.trim().length > 5);
                     
                     if (bullets.length > 1) {
@@ -201,8 +218,8 @@ const PresentationForge: React.FC = () => {
                       </motion.p>
                     );
                   })()}
+                  </div>
                 </div>
-                
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -261,13 +278,16 @@ const PresentationForge: React.FC = () => {
       )}
 
       {zoomLevel !== 'macro' && (
-        <button 
-          onClick={resetZoom}
-          className="sidebar-btn"
-          style={{ position: 'absolute', bottom: isMobile ? 100 : 40, left: isMobile ? 20 : 40, width: '44px', height: '44px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', zIndex: 1000 }}
-        >
-          ←
-        </button>
+        <div style={{ position: 'absolute', bottom: isMobile ? 100 : 40, left: isMobile ? 20 : 40, zIndex: 1000 }}>
+          {onboardingStep === 6 && <Tooltip text="Tap here to return to the map view." position="right" style={{ width: '150px' }} />}
+          <button 
+            onClick={resetZoom}
+            className="sidebar-btn"
+            style={{ width: '44px', height: '44px', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', opacity: onboardingStep > 0 && onboardingStep !== 6 ? 0.3 : 1, cursor: onboardingStep > 0 && onboardingStep !== 6 ? 'not-allowed' : 'pointer' }}
+          >
+            ←
+          </button>
+        </div>
       )}
     </div>
   );

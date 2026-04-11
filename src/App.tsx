@@ -16,6 +16,7 @@ import GenPanel from './components/GenPanel';
 import DossierCaptureTank from './components/DossierCaptureTank';
 import BottomCommandBar from './components/BottomCommandBar';
 import MemoryDrawer from './components/MemoryDrawer';
+import Tooltip from './components/Tooltip';
 
 // Styles
 import './styles/base.css';
@@ -38,8 +39,11 @@ const App = () => {
     sovereignCuration,
     identityStatement,
     handleAudit,
-    theme
-  } = useSovereign();
+    theme,
+    assignVisualToNode,
+    onboardingStep,
+    setOnboardingStep
+  } = useSovereign() as any;
 
   const [composerMode, setComposerMode] = useState<string | null>(null);
   const [presentationMode, setPresentationMode] = useState(false);
@@ -87,9 +91,12 @@ const App = () => {
                 <h2 style={{ fontSize: '24px', fontWeight: 900, color: 'white', lineHeight: '1.3', margin: 0 }}>{identityStatement}</h2>
               </div>
               <button 
-                onClick={() => setMobileTab('map')}
+                onClick={() => {
+                  if (onboardingStep > 0) return;
+                  setMobileTab('map');
+                }}
                 className="primary-action-btn"
-                style={{ padding: '15px 40px', fontSize: '11px', letterSpacing: '0.2em' }}
+                style={{ padding: '15px 40px', fontSize: '11px', letterSpacing: '0.2em', opacity: onboardingStep > 0 ? 0.3 : 1, cursor: onboardingStep > 0 ? 'not-allowed' : 'pointer' }}
               >
                 INITIALIZE NEURAL MAP
               </button>
@@ -112,24 +119,26 @@ const App = () => {
       <AnimatePresence>
         {showInitialUpload && (
           <OnboardingOverlay 
+            key="onboarding"
             setShowInitialUpload={setShowInitialUpload} 
             onComplete={handleOnboardingComplete}
           />
         )}
         
         {showPlayerCard && (
-          <PlayerCard onDismiss={() => setShowPlayerCard(false)} />
+          <PlayerCard key="player-card" onDismiss={() => setShowPlayerCard(false)} />
         )}
 
         <MemoryDrawer 
+          key="memory-drawer"
           isOpen={showMemoryDrawer} 
           onClose={() => setShowMemoryDrawer(false)} 
         />
 
-        <DossierCaptureTank />
+        <DossierCaptureTank key="dossier-capture" />
 
         {composerMode === 'data' && (
-          <div className="composer-overlay">
+          <div key="data-vault" className="composer-overlay">
             <DataVault 
               uploadedAssets={uploadedAssets} 
               fetchAssets={fetchAssets} 
@@ -141,7 +150,7 @@ const App = () => {
         )}
 
         {composerMode === 'visual' && (
-          <div className="composer-overlay">
+          <div key="gen-panel" className="composer-overlay">
             <GenPanel 
               onClose={() => setComposerMode(null)}
               uploadedAssets={uploadedAssets}
@@ -153,6 +162,7 @@ const App = () => {
 
         {presentationMode && (
           <motion.div 
+            key="presentation"
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }}
@@ -164,13 +174,20 @@ const App = () => {
           >
             <Starfield paused={isStarfieldPaused} />
             <div style={{ position: 'absolute', top: 40, right: 40, zIndex: 1000002 }}>
-              <button 
-                onClick={() => setPresentationMode(false)}
-                className="placeholder-button secondary glass-panel"
-                style={{ padding: '12px 24px', fontSize: '11px', letterSpacing: '0.2em' }}
-              >
-                EXIT PRESENTATION
-              </button>
+              <div style={{ position: 'relative' }}>
+                {onboardingStep === 7 && <Tooltip text="Tap here to exit presentation mode." position="left" style={{ width: '150px' }} />}
+                <button 
+                  onClick={() => {
+                    if (onboardingStep > 0 && onboardingStep !== 7) return;
+                    if (onboardingStep === 7) setOnboardingStep(8);
+                    setPresentationMode(false);
+                  }}
+                  className="placeholder-button secondary glass-panel"
+                  style={{ padding: '12px 24px', fontSize: '11px', letterSpacing: '0.2em', opacity: onboardingStep > 0 && onboardingStep !== 7 ? 0.3 : 1, cursor: onboardingStep > 0 && onboardingStep !== 7 ? 'not-allowed' : 'pointer' }}
+                >
+                  EXIT PRESENTATION
+                </button>
+              </div>
             </div>
             <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000001 }}>
               <PresentationForge />
@@ -179,7 +196,7 @@ const App = () => {
         )}
 
         {isAuditing && (
-          <div className="audit-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', zIndex: 2000000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div key="audit-progress" className="audit-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.95)', zIndex: 2000000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <div className="audit-progress-container" style={{ width: '300px' }}>
               <div className="audit-progress-bar" style={{ height: '2px', background: 'var(--color-primary)', width: `${auditProgress}%`, transition: 'width 0.3s ease' }}></div>
               <p style={{ color: 'var(--color-primary)', fontSize: '10px', fontWeight: 900, letterSpacing: '0.3em', marginTop: '20px', textAlign: 'center' }}>
@@ -190,7 +207,7 @@ const App = () => {
         )}
 
         {auditResult && (
-          <div className="audit-modal-overlay" onClick={() => setAuditResult(null)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(20px)', zIndex: 3000000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div key="audit-result" className="audit-modal-overlay" onClick={() => setAuditResult(null)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(20px)', zIndex: 3000000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="audit-modal glass-panel" onClick={e => e.stopPropagation()} style={{ width: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column', borderRadius: '32px', overflow: 'hidden' }}>
               <div className="composer-header">
                 <h2 className="suite-title">{auditResult.label} // AUDIT</h2>

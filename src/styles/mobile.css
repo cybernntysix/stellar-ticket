@@ -119,12 +119,21 @@
   .gen-panel .composer-body {
     display: flex !important;
     flex-direction: column !important;
-    overflow-y: auto;
+    overflow: hidden !important;
+    padding: 10px !important;
+  }
+
+  .mobile-source-view, .mobile-panel-view {
+    overflow-y: auto !important;
+    height: 100% !important;
   }
 
   .gen-panel .blender-col-main {
-    order: -1; /* Put the canvas at the top */
-    min-height: 400px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    overflow: hidden !important;
   }
 
   .gen-panel .history-list {
@@ -135,6 +144,12 @@
 
   .gen-panel .history-list .sidebar-btn {
     min-width: 150px;
+  }
+
+  .gen-panel .console-chat-bar {
+    background: transparent !important;
+    padding: 0 !important;
+    border: none !important;
   }
 
   /* PRESENTATION MODE MOBILE */

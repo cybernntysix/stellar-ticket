@@ -30,6 +30,8 @@ interface SovereignContextType {
   setIsAuditing: (is: boolean) => void;
   setAuditResult: (res: any) => void;
   setAuditProgress: (prog: number) => void;
+  setOnboardingStep: (step: number) => void;
+  assignVisualToNode: (nodeLabel: string, visualData: any) => void;
 }
 
 const SovereignContext = createContext<SovereignContextType | undefined>(undefined);
@@ -42,6 +44,7 @@ export const SovereignProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isAuditing, setIsAuditing] = useState(false);
   const [auditProgress, setAuditProgress] = useState(0);
   const [auditResult, setAuditResult] = useState<any | null>(null);
+  const [onboardingStep, setOnboardingStep] = useState(0);
   const [theme, setThemeState] = useState('dark');
   const [userDomains, setUserDomains] = useState(['', '', '', '']);
   const [userSkills, setUserSkills] = useState('ANALYTICAL, STRATEGIC, PRECISION-DRIVEN');
@@ -235,6 +238,18 @@ export const SovereignProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   };
 
+  const assignVisualToNode = (nodeLabel: string, visualData: any) => {
+    setSovereignCuration((prev: any) => {
+      if (!prev || !prev.discoveredNodes) return prev;
+      return {
+        ...prev,
+        discoveredNodes: prev.discoveredNodes.map((n: any) => 
+          n.label === nodeLabel ? { ...n, visualData } : n
+        )
+      };
+    });
+  };
+
   return (
     <SovereignContext.Provider value={{
       uploadedAssets,
@@ -244,7 +259,7 @@ export const SovereignProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       isAuditing,
       auditProgress,
       auditResult,
-      theme,
+      onboardingStep,
       userDomains,
       userSkills,
       fetchAssets,
@@ -263,7 +278,10 @@ export const SovereignProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       setIdentityStatement,
       setIsAuditing,
       setAuditResult,
-      setAuditProgress
+      setAuditProgress,
+      theme,
+      setOnboardingStep,
+      assignVisualToNode
     }}>
       {children}
     </SovereignContext.Provider>

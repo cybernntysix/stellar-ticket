@@ -68,7 +68,23 @@ const PlayerCard: React.FC<{ onDismiss: () => void }> = ({ onDismiss }) => {
         )}
 
         <div className="cta-hint" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '18px', letterSpacing: '0.3em', fontWeight: 900, marginTop: '100px' }}>
-          {(!sovereignCuration || isAuditing) ? "AWAITING SYSTEM STABILIZATION" : "TAP TO VIEW NEURAL INTERFACE"}
+          {(!sovereignCuration || isAuditing) ? "AWAITING SYSTEM STABILIZATION" : (
+            <motion.div 
+              animate={{ opacity: [0.5, 1, 0.5], scale: [1, 1.02, 1] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+              style={{ 
+                border: '1px solid var(--color-primary)', 
+                padding: '20px 40px', 
+                borderRadius: '12px', 
+                color: 'var(--color-primary)',
+                background: 'rgba(0, 122, 255, 0.05)',
+                boxShadow: '0 0 20px rgba(0, 122, 255, 0.2)',
+                display: 'inline-block'
+              }}
+            >
+              TAP TO VIEW NEURAL INTERFACE
+            </motion.div>
+          )}
         </div>
       </motion.div>
     </motion.div>
