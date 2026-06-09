@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-const BASE_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:3002`;
+const BASE_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:3031`;
 
 interface SovereignContextType {
   uploadedAssets: any[];
@@ -15,6 +15,7 @@ interface SovereignContextType {
   userSkills: string;
   fetchAssets: () => Promise<any[]>;
   fetchProjects: () => Promise<void>;
+  clearVault: () => Promise<void>;
   handleFileSelect: (files: FileList) => Promise<void>;
   generateSovereignty: (promptValue?: string) => Promise<void>;
   compileForgeNodes: () => Promise<void>;
@@ -32,6 +33,9 @@ interface SovereignContextType {
   setAuditProgress: (prog: number) => void;
   setOnboardingStep: (step: number) => void;
   assignVisualToNode: (nodeLabel: string, visualData: any) => void;
+  updateIdentityStatement: (statement: string) => void;
+  updateNodeData: (nodeLabel: string, newData: any) => void;
+  updateCurationContent: (content: string) => void;
 }
 
 const SovereignContext = createContext<SovereignContextType | undefined>(undefined);
@@ -81,6 +85,16 @@ export const SovereignProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, []);
 
+  const clearVault = async () => {
+    try {
+      await fetch(`${BASE_URL}/api/vault`, { method: 'DELETE' });
+      await fetchAssets();
+      alert("NEURAL VAULT SANITIZED.");
+    } catch (e) {
+      console.error("Failed to clear vault", e);
+    }
+  };
+
   useEffect(() => {
     fetchAssets();
     fetchProjects();
@@ -110,7 +124,7 @@ export const SovereignProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           customPrompt: `ACT AS THE PARADIGMOS COMPILER. 
           1. FORMULA: Based on these Domains and Attributes, reason out 8 high-status expert 'Neural Nodes' (2-3 words each, e.g. \"STRATEGIC ARCHITECTURE\").
           2. DEPTH: For each node, synthesize a 'Depth Summary' that bridges the skill with an elite attribute.
-          3. IDENTITY STATEMENT: One powerful marketable statement.
+          3. IDENTITY STATEMENT: Create a CONCISE, LinkedIn-style header (Name | Skill 1 | Skill 2). No filler.
           RETURN JSON ONLY: { \"discoveredNodes\": [{ \"label\": \"NODE TITLE\", \"depthSummary\": \"...\" }, ...], \"statement\": \"...\" }`
         })
       });
@@ -126,7 +140,7 @@ export const SovereignProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   };
 
-  const generateSovereignty = async (promptValue: string = "") => {
+  const generateSovereignty = async (promptValue: string = "", options: { freshSession?: boolean } = {}) => {
     if (isAuditing) return; 
     setIsAuditing(true);
     setAuditProgress(10);
@@ -250,6 +264,26 @@ export const SovereignProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     });
   };
 
+  const updateIdentityStatement = (statement: string) => {
+    setIdentityStatement(statement);
+  };
+
+  const updateNodeData = (nodeLabel: string, newData: any) => {
+    setSovereignCuration((prev: any) => {
+      if (!prev || !prev.discoveredNodes) return prev;
+      return {
+        ...prev,
+        discoveredNodes: prev.discoveredNodes.map((n: any) => 
+          n.label === nodeLabel ? { ...n, ...newData } : n
+        )
+      };
+    });
+  };
+
+  const updateCurationContent = (content: string) => {
+    setSovereignCuration((prev: any) => prev ? { ...prev, content } : null);
+  };
+
   return (
     <SovereignContext.Provider value={{
       uploadedAssets,
@@ -264,6 +298,7 @@ export const SovereignProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       userSkills,
       fetchAssets,
       fetchProjects,
+      clearVault,
       handleFileSelect,
       generateSovereignty,
       compileForgeNodes,
@@ -281,7 +316,10 @@ export const SovereignProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       setAuditProgress,
       theme,
       setOnboardingStep,
-      assignVisualToNode
+      assignVisualToNode,
+      updateIdentityStatement,
+      updateNodeData,
+      updateCurationContent
     }}>
       {children}
     </SovereignContext.Provider>

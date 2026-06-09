@@ -1,13 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
-import { SovereignProvider } from './context/SovereignContext'
-import './index.css'
+import { TicketProvider } from './context/TicketContext'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <SovereignProvider>
+    <TicketProvider>
       <App />
-    </SovereignProvider>
+    </TicketProvider>
   </React.StrictMode>,
 )

@@ -1,0 +1,106 @@
+[
+  {
+    "id": "A-1780761201634",
+    "teamId": "TEAM-DEFAULT",
+    "type": "status_change",
+    "ticketId": "T-1003",
+    "ticketTitle": "CRITICAL SECURITY BREACH ATTEMPT",
+    "user": "anthonycyber",
+    "timestamp": "2026-06-06T15:53:21.634Z",
+    "detail": "Status changed to open.",
+    "severity": "info",
+    "vector": "system"
+  },
+  {
+    "id": "A-1780760927298",
+    "teamId": "TEAM-DEFAULT",
+    "type": "ticket_created",
+    "ticketId": "T-1004",
+    "ticketTitle": "test",
+    "user": "Current User",
+    "timestamp": "2026-06-06T15:48:47.298Z",
+    "detail": "Ticket initialized.",
+    "severity": "critical",
+    "vector": "system"
+  },
+  {
+    "id": "A-1780759329060",
+    "teamId": "TEAM-DEFAULT",
+    "type": "status_change",
+    "ticketId": "T-1003",
+    "ticketTitle": "CRITICAL SECURITY BREACH ATTEMPT",
+    "user": "anthonycyber",
+    "timestamp": "2026-06-06T15:22:09.060Z",
+    "detail": "Status changed to closed.",
+    "severity": "info",
+    "vector": "system"
+  },
+  {
+    "id": "A-1780759325920",
+    "teamId": "TEAM-DEFAULT",
+    "type": "status_change",
+    "ticketId": "T-1003",
+    "ticketTitle": "CRITICAL SECURITY BREACH ATTEMPT",
+    "user": "anthonycyber",
+    "timestamp": "2026-06-06T15:22:05.920Z",
+    "detail": "Sub-task 'Complete reconnaissance of the breach attempt.' marked as complete.",
+    "severity": "info",
+    "vector": "system"
+  },
+  {
+    "id": "A-1780759287249",
+    "teamId": "TEAM-DEFAULT",
+    "type": "comment_added",
+    "ticketId": "T-1003",
+    "ticketTitle": "CRITICAL SECURITY BREACH ATTEMPT",
+    "user": "anthonycyber",
+    "timestamp": "2026-06-06T15:21:27.248Z",
+    "detail": "New comment registered.",
+    "severity": "info",
+    "vector": "system"
+  },
+  {
+    "id": "A-1780759258059",
+    "teamId": "TEAM-DEFAULT",
+    "type": "status_change",
+    "ticketId": "T-1003",
+    "ticketTitle": "CRITICAL SECURITY BREACH ATTEMPT",
+    "user": "anthonycyber",
+    "timestamp": "2026-06-06T15:20:58.060Z",
+    "detail": "Ticket assigned to anthonycyber.",
+    "severity": "info",
+    "vector": "system"
+  },
+  {
+    "id": "A-1780759257403",
+    "teamId": "TEAM-DEFAULT",
+    "type": "status_change",
+    "ticketId": "T-1003",
+    "ticketTitle": "CRITICAL SECURITY BREACH ATTEMPT",
+    "user": "anthonycyber",
+    "timestamp": "2026-06-06T15:20:57.403Z",
+    "detail": "Ticket escalation activated.",
+    "severity": "warning",
+    "vector": "system"
+  },
+  {
+    "id": "A-1",
+    "teamId": "TEAM-DEFAULT",
+    "type": "security_event",
+    "user": "GATEKEEPER-01",
+    "timestamp": "2026-06-06T14:39:29.434Z",
+    "detail": "Lateral movement attempt detected via SMB.",
+    "severity": "critical",
+    "vector": "network"
+  },
+  {
+    "id": "A-2",
+    "teamId": "TEAM-DEFAULT",
+    "type": "security_event",
+    "user": "SENTRY-V",
+    "timestamp": "2026-06-06T14:29:29.434Z",
+    "detail": "Recursive SSH login failure from unknown IP.",
+    "severity": "warning",
+    "vector": "access"
+  }
+]

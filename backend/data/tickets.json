@@ -1,0 +1,79 @@
+[
+  {
+    "title": "test",
+    "description": "test ticket",
+    "priority": "emergency",
+    "department": "Security",
+    "user": "Current User",
+    "status": "open",
+    "teamId": "TEAM-DEFAULT",
+    "id": "T-1004",
+    "createdAt": "2026-06-06T15:48:47.298Z",
+    "comments": [],
+    "isEscalated": false
+  },
+  {
+    "id": "T-1001",
+    "teamId": "TEAM-DEFAULT",
+    "title": "SYSTEM LATENCY IN NEURAL CORE",
+    "description": "The neural core is experiencing significant lag during high-load processing cycles.",
+    "priority": "high",
+    "status": "open",
+    "isEscalated": false,
+    "user": "Alpha-01",
+    "department": "Infrastructure",
+    "createdAt": "2026-06-06T12:44:29.434Z",
+    "comments": [
+      {
+        "id": "C-1",
+        "user": "System",
+        "text": "Auto-detected latency spike.",
+        "timestamp": "2026-06-06T12:44:29.434Z"
+      }
+    ]
+  },
+  {
+    "id": "T-1002",
+    "teamId": "TEAM-DEFAULT",
+    "title": "UI GLITCH IN BENTO GRID",
+    "description": "Bento boxes are not aligning correctly on mobile viewports.",
+    "priority": "normal",
+    "status": "open",
+    "isEscalated": true,
+    "user": "Beta-02",
+    "department": "IT",
+    "createdAt": "2026-06-06T09:44:29.434Z",
+    "comments": []
+  },
+  {
+    "id": "T-1003",
+    "teamId": "TEAM-DEFAULT",
+    "title": "CRITICAL SECURITY BREACH ATTEMPT",
+    "description": "Detected unauthorized access attempt from external node 192.168.1.50.",
+    "priority": "emergency",
+    "status": "open",
+    "isEscalated": true,
+    "user": "Sentinel-X",
+    "department": "Security",
+    "createdAt": "2026-06-06T14:14:29.434Z",
+    "comments": [
+      {
+        "user": "anthonycyber",
+        "text": "THIS TICKET IS AN EMERGENCY, IT HAS BEEN ESCALATED TO THE SECURITY TEAM.",
+        "isInternal": false,
+        "id": "C-1780759287248",
+        "timestamp": "2026-06-06T15:21:27.248Z"
+      }
+    ],
+    "modifier": "anthonycyber",
+    "assignedTo": "anthonycyber",
+    "tasks": [
+      {
+        "id": "TSK-1780759323478",
+        "description": "Complete reconnaissance of the breach attempt.",
+        "isComplete": true,
+        "createdAt": "2026-06-06T15:22:03.478Z"
+      }
+    ]
+  }
+]

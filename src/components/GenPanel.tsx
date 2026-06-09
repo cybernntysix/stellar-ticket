@@ -39,7 +39,7 @@ const GenPanel: React.FC<GenPanelProps> = ({ onClose, uploadedAssets, userDomain
     try {
       let contextText = "CONTEXT ASSETS:\n";
       for (const file of selectedFiles) {
-        const r = await fetch('http://localhost:3002/api/analyze', {
+        const r = await fetch('http://localhost:3031/api/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ path: file.path })
@@ -50,7 +50,7 @@ const GenPanel: React.FC<GenPanelProps> = ({ onClose, uploadedAssets, userDomain
         }
       }
 
-      const r = await fetch('http://localhost:3002/api/generate-visual', {
+      const r = await fetch('http://localhost:3031/api/generate-visual', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "U-001",
+    "username": "anthonycyber",
+    "password": "password",
+    "role": "cybersecurity",
+    "department": "Security",
+    "teamId": "TEAM-DEFAULT",
+    "layoutPrefs": {
+      "showForge": true,
+      "showQueue": true,
+      "showLogs": true,
+      "showKB": true
+    }
+  },
+  {
+    "id": "U-002",
+    "username": "clientuser",
+    "password": "password",
+    "role": "client",
+    "department": "IT",
+    "teamId": "TEAM-DEFAULT",
+    "layoutPrefs": {
+      "showForge": true,
+      "showQueue": true,
+      "showLogs": false,
+      "showKB": true
+    }
+  }
+]

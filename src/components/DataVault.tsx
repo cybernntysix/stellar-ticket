@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useSovereign } from '../context/SovereignContext';
@@ -22,13 +22,23 @@ const DataVault: React.FC<DataVaultProps> = ({
   sovereignCuration,
   identityStatement 
 }) => {
-  const { BASE_URL, onboardingStep, setOnboardingStep } = useSovereign() as any;
+  const { BASE_URL, onboardingStep, setOnboardingStep, clearVault, updateIdentityStatement, updateCurationContent } = useSovereign() as any;
   const [stagedDocs, setStagedDocs] = useState<any[]>([]);
   const [dataAnalysis, setDataAnalysis] = useState<any>(null);
   const [selectedLens, setSelectedLens] = useState('executive');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [mobileView, setMobileView] = useState('insights'); // 'vault', 'insights', 'blender'
+  const [isEditingIdentity, setIsEditingIdentity] = useState(false);
+  const [editedIdentity, setEditedIdentity] = useState(identityStatement || "");
+  const [isEditingSummary, setIsEditingSummary] = useState(false);
+  const [editedSummary, setEditedSummary] = useState("");
+
+  useEffect(() => { setEditedIdentity(identityStatement || ""); }, [identityStatement]);
+  useEffect(() => { 
+    if (sovereignCuration?.content) setEditedSummary(sovereignCuration.content);
+    else if (dataAnalysis?.summary) setEditedSummary(dataAnalysis.summary);
+  }, [sovereignCuration, dataAnalysis]);
   
   // Local Intents (Hardcoded to Summarize only now)
   const intents = { summarize: true, visualize: false };
@@ -45,7 +55,7 @@ const DataVault: React.FC<DataVaultProps> = ({
     }
 
     try {
-      const r = await fetch(`${BASE_URL || 'http://localhost:3002'}/api/upload`, {
+      const r = await fetch(`${BASE_URL || 'http://localhost:3031'}/api/upload`, {
         method: 'POST',
         body: formData
       });
@@ -78,7 +88,7 @@ const DataVault: React.FC<DataVaultProps> = ({
       let csvData = null;
 
       const results = await Promise.all(stagedDocs.map(async (asset) => {
-        const r = await fetch(`${BASE_URL || 'http://localhost:3002'}/api/analyze`, {
+        const r = await fetch(`${BASE_URL || 'http://localhost:3031'}/api/analyze`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ path: asset.path })
@@ -103,7 +113,7 @@ const DataVault: React.FC<DataVaultProps> = ({
 
       let finalAnalysis = { type: hasCsv ? 'csv' : 'pdf', data: csvData, text: combinedText, summary: '' };
 
-      const summarizeResponse = await fetch(`${BASE_URL || 'http://localhost:3002'}/api/summarize`, {
+      const summarizeResponse = await fetch(`${BASE_URL || 'http://localhost:3031'}/api/summarize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -247,6 +257,13 @@ const DataVault: React.FC<DataVaultProps> = ({
               <button className="primary-action-btn" style={{ width: '100%', marginTop: '30px', padding: '15px' }} onClick={() => (document.getElementById('mobile-file-input') as HTMLInputElement)?.click()}>
                 INGEST NEW DATA
               </button>
+              <button 
+                className="placeholder-button secondary glass-panel" 
+                onClick={clearVault}
+                style={{ marginTop: '10px', width: '100%', padding: '15px', borderColor: 'rgba(255,59,48,0.3)', color: '#FF3B30', fontSize: '12px' }}
+              >
+                CLEAR VAULT
+              </button>
               <input id="mobile-file-input" type="file" multiple onChange={(e) => handleFileSelect(e.target.files!)} style={{ display: 'none' }} />
             </div>
           )}
@@ -352,6 +369,13 @@ const DataVault: React.FC<DataVaultProps> = ({
             <button className="placeholder-button secondary glass-panel ingest-btn" onClick={() => (document.getElementById('suite-file-input') as HTMLInputElement)?.click()}>
               INGEST NEW DATA
             </button>
+            <button 
+              className="placeholder-button secondary glass-panel" 
+              onClick={clearVault}
+              style={{ marginTop: '10px', width: '100%', borderColor: 'rgba(255,59,48,0.3)', color: '#FF3B30', fontSize: '10px' }}
+            >
+              CLEAR VAULT
+            </button>
             <input id="suite-file-input" type="file" multiple onChange={(e) => handleFileSelect(e.target.files!)} style={{ display: 'none' }} />
           </div>
 
@@ -368,8 +392,21 @@ const DataVault: React.FC<DataVaultProps> = ({
                 <div className="analysis-results">
                   {dataAnalysis.summary && (
                     <div className="summary-section">
-                      <h5 className="section-label">EXECUTIVE SUMMARY</h5>
-                      <div className="summary-text-full">{dataAnalysis.summary}</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                        <h5 className="section-label" style={{ margin: 0 }}>EXECUTIVE SUMMARY</h5>
+                        {!isEditingSummary && <button className="clean-remove-btn" onClick={() => setIsEditingSummary(true)} style={{ background: 'none', border: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontSize: '10px' }}>EDIT</button>}
+                      </div>
+                      {isEditingSummary ? (
+                          <div>
+                            <textarea value={editedSummary} onChange={e => setEditedSummary(e.target.value)} style={{ width: '100%', height: '200px', background: 'rgba(0,0,0,0.5)', color: 'white', border: '1px solid var(--color-primary)', borderRadius: '4px', padding: '15px', fontSize: '14px', lineHeight: '1.7' }} />
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                              <button className="sidebar-btn" onClick={() => { updateCurationContent(editedSummary); setIsEditingSummary(false); }} style={{ padding: '5px 10px', fontSize: '10px', width: 'auto' }}>SAVE</button>
+                              <button className="sidebar-btn" onClick={() => { setEditedSummary(dataAnalysis?.summary || ""); setIsEditingSummary(false); }} style={{ padding: '5px 10px', fontSize: '10px', width: 'auto' }}>CANCEL</button>
+                            </div>
+                          </div>
+                      ) : (
+                        <div className="summary-text-full">{dataAnalysis.summary}</div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -378,16 +415,45 @@ const DataVault: React.FC<DataVaultProps> = ({
               {!dataAnalysis && !isAnalyzing && (sovereignCuration || identityStatement) && (
                 <div className="analysis-results">
                   <div className="summary-section">
-                    <h5 className="section-label" style={{ color: 'var(--color-primary)' }}>EXISTING SYNTHESIS</h5>
+                    <h5 className="section-label" style={{ color: 'var(--color-primary)', marginBottom: '20px' }}>EXISTING SYNTHESIS</h5>
                     {identityStatement && (
                       <div style={{ marginBottom: '30px', padding: '20px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', borderLeft: '4px solid var(--color-primary)' }}>
-                        <h5 className="section-label" style={{ fontSize: '10px', marginBottom: '10px' }}>CORE IDENTITY STATEMENT</h5>
-                        <p style={{ fontSize: '20px', fontWeight: 900, color: 'white', margin: 0, lineHeight: '1.4' }}>{identityStatement}</p>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                          <h5 className="section-label" style={{ fontSize: '10px', margin: 0 }}>CORE IDENTITY STATEMENT</h5>
+                          {!isEditingIdentity && <button className="clean-remove-btn" onClick={() => setIsEditingIdentity(true)} style={{ background: 'none', border: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontSize: '10px' }}>EDIT</button>}
+                        </div>
+                        {isEditingIdentity ? (
+                          <div>
+                            <textarea value={editedIdentity} onChange={e => setEditedIdentity(e.target.value)} style={{ width: '100%', height: '80px', background: 'rgba(0,0,0,0.5)', color: 'white', border: '1px solid var(--color-primary)', borderRadius: '4px', padding: '10px', fontSize: '16px' }} />
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                              <button className="sidebar-btn" onClick={() => { updateIdentityStatement(editedIdentity); setIsEditingIdentity(false); }} style={{ padding: '5px 10px', fontSize: '10px', width: 'auto' }}>SAVE</button>
+                              <button className="sidebar-btn" onClick={() => { setEditedIdentity(identityStatement); setIsEditingIdentity(false); }} style={{ padding: '5px 10px', fontSize: '10px', width: 'auto' }}>CANCEL</button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p style={{ fontSize: '20px', fontWeight: 900, color: 'white', margin: 0, lineHeight: '1.4' }}>{identityStatement}</p>
+                        )}
                       </div>
                     )}
                     {sovereignCuration?.content && (
-                      <div className="summary-text-full" style={{ fontSize: '16px', lineHeight: '1.8' }}>
-                        {sovereignCuration.content}
+                      <div className="summary-section">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                          <h5 className="section-label" style={{ margin: 0, color: 'var(--color-primary)' }}>EXECUTIVE SUMMARY</h5>
+                          {!isEditingSummary && <button className="clean-remove-btn" onClick={() => setIsEditingSummary(true)} style={{ background: 'none', border: 'none', color: 'var(--color-primary)', cursor: 'pointer', fontSize: '10px' }}>EDIT</button>}
+                        </div>
+                        {isEditingSummary ? (
+                          <div>
+                            <textarea value={editedSummary} onChange={e => setEditedSummary(e.target.value)} style={{ width: '100%', height: '200px', background: 'rgba(0,0,0,0.5)', color: 'white', border: '1px solid var(--color-primary)', borderRadius: '4px', padding: '15px', fontSize: '16px', lineHeight: '1.8' }} />
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                              <button className="sidebar-btn" onClick={() => { updateCurationContent(editedSummary); setIsEditingSummary(false); }} style={{ padding: '5px 10px', fontSize: '10px', width: 'auto' }}>SAVE</button>
+                              <button className="sidebar-btn" onClick={() => { setEditedSummary(sovereignCuration.content); setIsEditingSummary(false); }} style={{ padding: '5px 10px', fontSize: '10px', width: 'auto' }}>CANCEL</button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="summary-text-full" style={{ fontSize: '16px', lineHeight: '1.8' }}>
+                            {sovereignCuration.content}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

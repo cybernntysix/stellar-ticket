@@ -19,7 +19,7 @@ const NeuralConsole: React.FC<NeuralConsoleProps> = ({ contextText }) => {
     setIsProcessing(true);
 
     try {
-      const r = await fetch(`${BASE_URL || 'http://localhost:3002'}/api/summarize`, {
+      const r = await fetch(`${BASE_URL || 'http://localhost:3031'}/api/summarize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 

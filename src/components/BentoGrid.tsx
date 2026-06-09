@@ -1,114 +1,289 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { MoreVertical } from 'lucide-react';
-import { useSovereign } from '../context/SovereignContext';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MoreVertical, Shield, AlertCircle, Filter, List, Eye, EyeOff } from 'lucide-react';
+import { useTickets, Ticket, Activity, KBArticle } from '../context/TicketContext';
 import NeuralConstellation from './NeuralConstellation';
+import NewTicketModal from './NewTicketModal';
+import TicketDetailModal from './TicketDetailModal';
+import KBArticleModal from './KBArticleModal';
+import TicketListModal from './TicketListModal';
+import AuthorityArchive from './AuthorityArchive';
 
-const BentoBox: React.FC<{ title: string; children: React.ReactNode; className?: string; style?: React.CSSProperties }> = ({ title, children, className = '', style = {} }) => (
-  <div className={`glass-panel bento-box ${className}`} style={style}>
-    <div className="bento-header">
-      <span className="bento-title">{title}</span>
-      <MoreVertical size={14} className="bento-icon" />
-    </div>
-    <div className="bento-content">
+interface BentoBoxProps {
+    title?: string;
+    children: React.ReactNode;
+    className?: string;
+    style?: React.CSSProperties;
+    isCalibrationMode?: boolean;
+    isVisible?: boolean;
+    onToggleVisibility?: () => void;
+}
+
+const BentoBox: React.FC<BentoBoxProps> = ({ title, children, className = '', style = {}, isCalibrationMode, isVisible = true, onToggleVisibility }) => (
+  <div className={`glass-panel bento-box ${className}`} style={{ ...style, display: isVisible || isCalibrationMode ? 'flex' : 'none', flexDirection: 'column', minHeight: 0, opacity: !isVisible && isCalibrationMode ? 0.3 : 1 }}>
+    {title && (
+      <div className="bento-header" style={{ flexShrink: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span className="bento-title">{title}</span>
+        {isCalibrationMode && onToggleVisibility ? (
+            <button onClick={onToggleVisibility} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
+                {isVisible ? <Eye size={14} /> : <EyeOff size={14} />}
+            </button>
+        ) : (
+            <MoreVertical size={14} className="bento-icon" />
+        )}
+      </div>
+    )}
+    <div className="bento-content" style={{ flexGrow: 1, minHeight: 0, overflow: 'hidden' }}>
       {children}
     </div>
   </div>
 );
 
-const BentoGrid: React.FC<{ setComposerMode: (mode: string) => void }> = ({ setComposerMode }) => {
-  const { 
-    sovereignCuration, 
-    identityStatement, 
-    uploadedAssets, 
-    handleAudit, 
-    saveSovereignSnapshot, 
-    setSovereignCuration 
-  } = useSovereign();
+const PRIORITY_COLORS = {
+  emergency: '#FF3B30',
+  high: '#FF9500',
+  normal: '#007AFF',
+  low: '#34C759'
+};
+
+const SEVERITY_COLORS = {
+  critical: '#FF3B30',
+  warning: '#FF9500',
+  info: 'var(--color-primary)'
+};
+
+interface BentoGridProps {
+    isCalibrationMode?: boolean;
+}
+
+const BentoGrid: React.FC<BentoGridProps> = ({ isCalibrationMode = false }) => {
+  const { tickets, activities, knowledgeBase, currentUser, updateLayoutPrefs } = useTickets();
+  const [isNewTicketModalOpen, setIsNewTicketModalOpen] = useState(false);
+  const [isTicketListOpen, setIsTicketListOpen] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [selectedKB, setSelectedKB] = useState<KBArticle | null>(null);
+  const [archiveTicketId, setArchiveTicketId] = useState<string | null>(null);
+  const [logFilter, setLogFilter] = useState<'all' | 'security' | 'support'>('all');
+
+  const isCyber = currentUser?.role === 'cybersecurity';
+  const isClient = currentUser?.role === 'client';
+  
+  // Safe layout prefs access
+  const prefs = currentUser?.layoutPrefs || { showForge: true, showQueue: true, showLogs: !isClient, showKB: true };
+
+  const handleTogglePref = (key: keyof typeof prefs) => {
+      updateLayoutPrefs({ [key]: !prefs[key] });
+  };
+
+  const filteredActivities = activities.filter(a => {
+    if (logFilter === 'all') return true;
+    if (logFilter === 'security') return a.type === 'security_event';
+    if (logFilter === 'support') return a.type !== 'security_event';
+    return true;
+  });
+
+  const hasCriticalEvent = activities.some(a => a.severity === 'critical' && (Date.now() - new Date(a.timestamp).getTime() < 1000 * 60 * 60));
+
+  // Layout Logic
+  const showQueue = !isClient && prefs.showQueue;
+  const showLogs = !isClient && prefs.showLogs;
+  const forgeGridCol = showQueue || showLogs ? 'span 8' : 'span 12';
+  let forgeGridRow = 'span 8';
+  if (!showQueue && !showLogs) forgeGridRow = prefs.showKB ? 'span 8' : 'span 10';
 
   return (
-    <div className="bento-grid" style={{ flexGrow: 1, display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gridTemplateRows: 'repeat(12, 1fr)', gap: '20px', height: '100%', minHeight: '0' }}>
-      <BentoBox title="The Forge" className="bento-forge" style={{ gridColumn: 'span 6', gridRow: 'span 9' }}>
-        <div style={{ height: '100%', minHeight: '0', background: '#000', position: 'relative', overflow: 'hidden', borderRadius: '12px' }}>
-          <NeuralConstellation onAudit={handleAudit} userDomains={sovereignCuration?.discoveredNodes} />
+    <div className="bento-grid" style={{ 
+      display: 'grid', 
+      gridTemplateColumns: 'repeat(12, 1fr)', 
+      gridTemplateRows: 'repeat(12, 1fr)', 
+      gap: '12px', 
+      height: '100%', 
+      width: '100%',
+      minHeight: 0 
+    }}>
+      
+      {/* BOX 1: NEURAL CONSTELLATION (The Forge) */}
+      <BentoBox 
+        title="NEURAL CONSTELLATION // TICKETS" 
+        className={`bento-forge ${isCyber && hasCriticalEvent ? 'critical-breach-box' : ''}`} 
+        style={{ gridColumn: forgeGridCol, gridRow: forgeGridRow, position: 'relative' }}
+        isCalibrationMode={isCalibrationMode}
+        isVisible={prefs.showForge}
+        onToggleVisibility={() => handleTogglePref('showForge')}
+      >
+        <div style={{ height: '100%', width: '100%', background: '#000', position: 'relative', overflow: 'hidden', borderRadius: '12px' }}>
+          {isCyber && hasCriticalEvent && (
+            <motion.div 
+                animate={{ opacity: [0.1, 0.3, 0.1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                style={{ position: 'absolute', inset: 0, border: '2px solid #FF3B30', borderRadius: '12px', zIndex: 10, pointerEvents: 'none', boxShadow: 'inset 0 0 50px rgba(255,59,48,0.3)' }}
+            />
+          )}
+          <NeuralConstellation onNodeClick={(ticket) => setArchiveTicketId(ticket.id)} />
         </div>
       </BentoBox>
       
-      <BentoBox title="Curated Insights" className="bento-insights" style={{ gridColumn: 'span 6', gridRow: 'span 9' }}>
-        {sovereignCuration ? (
-          <div className="insight-canvas-large" style={{ padding: '20px', height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '30px' }}>
-            <div className="insight-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span className="section-label" style={{ color: 'var(--color-primary)', fontSize: '10px' }}>AUTO-GENERATED: {sovereignCuration.timestamp}</span>
-              <div className="insight-actions" style={{ display: 'flex', gap: '10px' }}>
-                <button className="sidebar-btn small" onClick={saveSovereignSnapshot} style={{ padding: '8px 12px', fontSize: '10px', margin: 0 }}>PACKAGE</button>
-                <button className="sidebar-btn small" onClick={() => setSovereignCuration(null)} style={{ padding: '8px 12px', fontSize: '10px', margin: 0 }}>RESET</button>
+      {/* BOX 2: ACTIVE QUEUE */}
+      <BentoBox 
+        title={isClient ? "MY SYSTEM REQUESTS" : "ACTIVE QUEUE"} 
+        className="bento-tickets" 
+        style={{ gridColumn: 'span 4', gridRow: showLogs ? 'span 4' : (prefs.showKB ? 'span 8' : 'span 10') }}
+        isCalibrationMode={isCalibrationMode}
+        isVisible={showQueue}
+        onToggleVisibility={() => handleTogglePref('showQueue')}
+      >
+        <div style={{ height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', padding: '10px' }}>
+          {(isClient ? clientTickets : tickets).map(ticket => (
+            <div 
+                key={ticket.id} 
+                onClick={() => setArchiveTicketId(ticket.id)}
+                style={{ background: 'rgba(255,255,255,0.03)', borderLeft: `3px solid ${PRIORITY_COLORS[ticket.priority]}`, padding: '12px', borderRadius: '0 8px 8px 0', flexShrink: 0, cursor: 'pointer', transition: 'transform 0.2s' }}
+                className="ticket-queue-item"
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '10px', fontWeight: 900, color: 'white' }}>{ticket.id}</span>
+                <div style={{ display: 'flex', gap: '5px' }}>
+                    {!isClient && ticket.isEscalated && <span style={{ background: '#AF52DE', width: '6px', height: '6px', borderRadius: '50%' }} />}
+                    <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.4)' }}>{ticket.status.toUpperCase()}</span>
+                </div>
+              </div>
+              <p style={{ fontSize: '12px', color: 'white', fontWeight: 600, margin: '5px 0' }}>{ticket.title}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: 'rgba(255,255,255,0.3)' }}>
+                <span style={{ color: 'var(--color-primary)' }}>{ticket.priority.toUpperCase()}</span>
+                <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
               </div>
             </div>
-            <div className="narrative-section">
-              <p className="summary-text-full" style={{ fontSize: '15px', lineHeight: '1.6', color: 'white', fontWeight: 400, margin: 0 }}>
-                {sovereignCuration.content}
-              </p>
+          ))}
+          {(isClient ? clientTickets : tickets).length === 0 && (
+            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.3 }}>
+                <p style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em' }}>NO NODES DETECTED</p>
             </div>
-            {sovereignCuration.connectiveStatements && (
-              <div className="connective-section">
-                <span className="section-label" style={{ display: 'block', marginBottom: '15px', color: 'rgba(255,255,255,0.3)', fontSize: '10px' }}>NEURAL BRIDGES // MARKET ACCESS</span>
-                {sovereignCuration.connectiveStatements.map((stmt: string, i: number) => (
-                  <motion.div 
-                    key={i} 
-                    initial={{ opacity: 0, x: -20 }} 
-                    animate={{ opacity: 1, x: 0 }} 
-                    transition={{ delay: i * 0.1 }} 
-                    style={{ background: 'rgba(255,255,255,0.03)', borderLeft: '2px solid var(--color-primary)', padding: '12px 15px', marginBottom: '10px', borderRadius: '0 8px 8px 0' }}
-                  >
-                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.9)', margin: 0, lineHeight: '1.4' }}>{stmt}</p>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="empty-insights" style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <div className="drop-icon-pulse" style={{ fontSize: '24px', opacity: 0.3 }}>✧</div>
-            <p style={{ textAlign: 'center', fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginTop: '10px' }}>
-              {uploadedAssets.length > 0 ? 'RECORDS DETECTED. GENERATE NARRATIVE.' : 'UPLOAD DATA TO START.'}
-            </p>
-          </div>
-        )}
+          )}
+        </div>
       </BentoBox>
 
-      <BentoBox title="Core Identity" className="bento-identity-footer" style={{ gridColumn: 'span 12', gridRow: 'span 3' }}>
-        <div className="identity-footer-content" style={{ display: 'flex', gap: '20px', alignItems: 'center', height: '100%', width: '100%', padding: '5px' }}>
-          <div className="identity-statement-section" style={{ flexGrow: 1, borderRight: '1px solid rgba(255,255,255,0.1)', paddingRight: '20px', height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-            <span className="section-label" style={{ marginBottom: '8px', display: 'block', fontSize: '9px', flexShrink: 0 }}>COMPILED AUTHORITY STATEMENT</span>
-            <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-              <p className="statement-text" style={{ fontSize: '16px', fontWeight: 800, color: 'white', margin: 0, letterSpacing: '0.01em', lineHeight: '1.3' }}>
-                {identityStatement}
-              </p>
+      {/* BOX 3: SYSTEM LOGS */}
+      <BentoBox 
+        title={isCyber ? "SHADOW VECTOR // SYSTEM LOGS" : "SYSTEM LOGS"} 
+        className="bento-activity" 
+        style={{ gridColumn: 'span 4', gridRow: showQueue ? 'span 4' : (prefs.showKB ? 'span 8' : 'span 10') }}
+        isCalibrationMode={isCalibrationMode}
+        isVisible={showLogs}
+        onToggleVisibility={() => handleTogglePref('showLogs')}
+      >
+            {isCyber && (
+                <div style={{ display: 'flex', gap: '8px', padding: '0 10px 10px 10px', flexShrink: 0 }}>
+                    <button onClick={() => setLogFilter('all')} style={{ background: logFilter === 'all' ? 'var(--color-primary)' : 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '8px', fontWeight: 900, color: 'white', cursor: 'pointer' }}>ALL</button>
+                    <button onClick={() => setLogFilter('security')} style={{ background: logFilter === 'security' ? '#FF3B30' : 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '8px', fontWeight: 900, color: 'white', cursor: 'pointer' }}>SECURITY</button>
+                    <button onClick={() => setLogFilter('support')} style={{ background: logFilter === 'support' ? '#007AFF' : 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '8px', fontWeight: 900, color: 'white', cursor: 'pointer' }}>SUPPORT</button>
+                </div>
+            )}
+            <div style={{ height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', padding: '10px' }}>
+            {filteredActivities.filter(a => isCyber || a.type !== 'security_event').map(activity => (
+                <div key={activity.id} style={{ display: 'flex', gap: '10px', flexShrink: 0 }}>
+                <div style={{ width: '2px', background: SEVERITY_COLORS[activity.severity], opacity: 0.8 }} />
+                <div style={{ flexGrow: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                    <span style={{ fontSize: '9px', fontWeight: 900, color: SEVERITY_COLORS[activity.severity], display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        {isCyber && activity.type === 'security_event' && <Shield size={10} />}
+                        {activity.severity === 'critical' && <AlertCircle size={10} />}
+                        {activity.user}
+                    </span>
+                    <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.2)' }}>{new Date(activity.timestamp).toLocaleTimeString()}</span>
+                    </div>
+                    <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+                    {activity.ticketId && <span style={{ color: 'white' }}>{activity.ticketId}: </span>}
+                    {activity.detail}
+                    {isCyber && activity.vector && <span style={{ fontSize: '8px', color: SEVERITY_COLORS[activity.severity], marginLeft: '8px', opacity: 0.5 }}>[{activity.vector.toUpperCase()}]</span>}
+                    </p>
+                </div>
+                </div>
+            ))}
             </div>
+        </BentoBox>
+
+      {/* BOX 4: KNOWLEDGE BASE (Sliding Text) */}
+      <BentoBox 
+        title="KNOWLEDGE BASE // NEURAL INSIGHTS" 
+        className="bento-kb" 
+        style={{ gridColumn: 'span 12', gridRow: 'span 2' }}
+        isCalibrationMode={isCalibrationMode}
+        isVisible={prefs.showKB}
+        onToggleVisibility={() => handleTogglePref('showKB')}
+      >
+        <div style={{ height: '100%', display: 'flex', alignItems: 'center', overflow: 'hidden', position: 'relative' }}>
+          <motion.div 
+            animate={{ x: ['100%', '-100%'] }} 
+            transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+            style={{ display: 'flex', gap: '100px', whiteSpace: 'nowrap', position: 'absolute' }}
+          >
+            {knowledgeBase.map(kb => (
+              <div key={kb.id} onClick={() => setSelectedKB(kb)} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} className="kb-marquee-item">
+                <span style={{ fontSize: '10px', fontWeight: 900, color: 'var(--color-primary)', letterSpacing: '0.2em' }}>{kb.id}</span>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: 'white' }}>{kb.title.toUpperCase()}</span>
+                <span style={{ color: 'rgba(255,255,255,0.2)' }}>//</span>
+              </div>
+            ))}
+            {knowledgeBase.map(kb => (
+              <div key={`${kb.id}-dup`} onClick={() => setSelectedKB(kb)} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} className="kb-marquee-item">
+                <span style={{ fontSize: '10px', fontWeight: 900, color: 'var(--color-primary)', letterSpacing: '0.2em' }}>{kb.id}</span>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: 'white' }}>{kb.title.toUpperCase()}</span>
+                <span style={{ color: 'rgba(255,255,255,0.2)' }}>//</span>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </BentoBox>
+
+      {/* BOX 5: QUICK ACTIONS */}
+      <BentoBox className="bento-actions" style={{ gridColumn: 'span 12', gridRow: 'span 2' }}>
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'center', height: '100%', width: '100%', padding: '0 5px', justifyContent: 'space-between' }}>
+          <div style={{ flexGrow: 1, minWidth: '150px' }}>
+            <span className="section-label" style={{ marginBottom: '4px', display: 'block', fontSize: '9px' }}>AUTHORITY PANEL // SYSTEM STATUS: {isCyber && hasCriticalEvent ? 'BREACH DETECTED' : 'OPTIMAL'}</span>
+            <p style={{ fontSize: '11px', fontWeight: 800, color: isCyber && hasCriticalEvent ? '#FF3B30' : 'white', margin: 0, lineHeight: '1.4' }}>
+                {isCyber && hasCriticalEvent ? 'CRITICAL SECURITY ANOMALY IN PROGRESS // STANDBY' : 'NEURAL TICKETING INTERFACE ACTIVE // STANDBY'}
+            </p>
           </div>
-          
-          <div className="identity-prompt-section" style={{ flexShrink: 0, minWidth: '150px', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: '10px', flexShrink: 0 }}>
             <button 
-              className="primary-action-btn" 
-              onClick={() => setComposerMode('data')} 
-              style={{ 
-                padding: '12px 30px', 
-                fontSize: '11px', 
-                fontWeight: 900, 
-                letterSpacing: '0.15em',
-                background: 'var(--color-primary)',
-                border: 'none',
-                borderRadius: '10px',
-                color: 'white',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap'
-              }}
+                className="placeholder-button secondary glass-panel" 
+                style={{ padding: '8px 15px', fontSize: '9px', fontWeight: 900, flexShrink: 0, display: 'flex', alignItems: 'center', gap: '6px' }}
+                onClick={() => setIsTicketListOpen(true)}
             >
-              GENERATE
+                <List size={12} /> VIEW NODES
+            </button>
+            <button 
+                className="primary-action-btn" 
+                style={{ padding: '8px 15px', fontSize: '9px', fontWeight: 900, flexShrink: 0, background: isCyber && hasCriticalEvent ? '#FF3B30' : 'var(--color-primary)' }}
+                onClick={() => setIsNewTicketModalOpen(true)}
+            >
+                NEW TICKET
             </button>
           </div>
         </div>
       </BentoBox>
+
+      <NewTicketModal 
+        isOpen={isNewTicketModalOpen} 
+        onClose={() => setIsNewTicketModalOpen(false)} 
+      />
+
+      <TicketListModal
+        isOpen={isTicketListOpen}
+        onClose={() => setIsTicketListOpen(false)}
+        onSelectTicket={(ticket) => setArchiveTicketId(ticket.id)}
+      />
+
+      <KBArticleModal
+        article={selectedKB}
+        onClose={() => setSelectedKB(null)}
+      />
+
+      <AuthorityArchive 
+        ticketId={archiveTicketId} 
+        onClose={() => setArchiveTicketId(null)} 
+      />
+
     </div>
   );
 };
