@@ -97,7 +97,10 @@ interface TicketContextType {
 const TicketContext = createContext<TicketContextType | undefined>(undefined);
 
 export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const savedUser = localStorage.getItem('stellar_user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const isAuthenticated = currentUser !== null;
 
   const [departments] = useState<Department[]>(['IT', 'Security', 'Infrastructure', 'Research', 'HR']);
@@ -143,14 +146,17 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       });
       if (!res.ok) throw new Error('Invalid credentials');
       const userData = await res.json();
-      setCurrentUser({
+      const userObj = {
           id: userData.id,
           name: userData.username,
           username: userData.username,
           role: userData.role,
           department: userData.department,
-          teamId: userData.teamId
-      });
+          teamId: userData.teamId,
+          layoutPrefs: userData.layoutPrefs
+      };
+      setCurrentUser(userObj);
+      localStorage.setItem('stellar_user', JSON.stringify(userObj));
   };
 
   const register = async (data: any) => {
@@ -164,20 +170,24 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           throw new Error(err.error || 'Registration failed');
       }
       const userData = await res.json();
-      setCurrentUser({
+      const userObj = {
           id: userData.id,
           name: userData.username,
           username: userData.username,
           role: userData.role,
           department: userData.department,
-          teamId: userData.teamId
-      });
+          teamId: userData.teamId,
+          layoutPrefs: userData.layoutPrefs
+      };
+      setCurrentUser(userObj);
+      localStorage.setItem('stellar_user', JSON.stringify(userObj));
   };
 
   const logout = () => {
       setCurrentUser(null);
       setTickets([]);
       setActivities([]);
+      localStorage.removeItem('stellar_user');
   };
 
   const updateLayoutPrefs = async (prefs: Partial<LayoutPrefs>) => {
@@ -190,10 +200,12 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
         if (res.ok) {
             const updatedUser = await res.json();
-            setCurrentUser({
+            const userObj = {
                 ...currentUser,
                 layoutPrefs: updatedUser.layoutPrefs
-            });
+            };
+            setCurrentUser(userObj);
+            localStorage.setItem('stellar_user', JSON.stringify(userObj));
         }
     } catch (err) { console.error(err); }
   };
@@ -299,7 +311,9 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Only keeping this temporarily to not break components that might still call it.
   const switchRole = (role: Role) => {
     if (currentUser) {
-       setCurrentUser({ ...currentUser, role });
+       const updatedUser = { ...currentUser, role };
+       setCurrentUser(updatedUser);
+       localStorage.setItem('stellar_user', JSON.stringify(updatedUser));
     }
   };
 

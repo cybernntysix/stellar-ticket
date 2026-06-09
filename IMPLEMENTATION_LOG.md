@@ -94,3 +94,7 @@ This document provides a chronological record of the visual and functional trans
 - **Cinematic Landing Page**: Engineered a secure, full-screen entry gateway (`LandingPage.tsx`) that sits atop the Starfield background with a dark, legible overlay.
 - **Role Selection Logic**: Users must now actively select their login path (Client Portal, Support Command, or Shadow Vector) before gaining access to the platform.
 - **Authentication State**: Updated `App.tsx` to conditionally hold the dashboard in a locked state until a successful login event triggers the transition.
+
+## [Interval 21] Session Persistence & Secure Logout
+- **Persistent State**: Wired the authentication context to the browser's `localStorage` API. The application now saves the user's active session, allowing for page refreshes without returning to the landing page.
+- **Secure Logout**: Implemented a global 'System Logout' button that clears the user's local session and forcefully returns them to the secure gateway.

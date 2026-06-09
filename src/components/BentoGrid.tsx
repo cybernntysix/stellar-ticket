@@ -211,21 +211,23 @@ const BentoGrid: React.FC<BentoGridProps> = ({ isCalibrationMode = false }) => {
         isVisible={prefs.showKB}
         onToggleVisibility={() => handleTogglePref('showKB')}
       >
-        <div style={{ height: '100%', display: 'flex', alignItems: 'center', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ height: '100%', display: 'flex', alignItems: 'center', overflow: 'hidden', position: 'relative', width: '100%' }}>
           <motion.div 
-            animate={{ x: ['100%', '-100%'] }} 
-            transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
-            style={{ display: 'flex', gap: '100px', whiteSpace: 'nowrap', position: 'absolute' }}
+            animate={{ x: ['0%', '-50%'] }} 
+            transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+            style={{ display: 'flex', gap: '100px', whiteSpace: 'nowrap', width: 'max-content' }}
           >
+            {/* First Set */}
             {knowledgeBase.map(kb => (
-              <div key={kb.id} onClick={() => setSelectedKB(kb)} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} className="kb-marquee-item">
+              <div key={`set1-${kb.id}`} onClick={() => setSelectedKB(kb)} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} className="kb-marquee-item">
                 <span style={{ fontSize: '10px', fontWeight: 900, color: 'var(--color-primary)', letterSpacing: '0.2em' }}>{kb.id}</span>
                 <span style={{ fontSize: '14px', fontWeight: 700, color: 'white' }}>{kb.title.toUpperCase()}</span>
                 <span style={{ color: 'rgba(255,255,255,0.2)' }}>//</span>
               </div>
             ))}
+            {/* Second Set (For seamless looping) */}
             {knowledgeBase.map(kb => (
-              <div key={`${kb.id}-dup`} onClick={() => setSelectedKB(kb)} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} className="kb-marquee-item">
+              <div key={`set2-${kb.id}`} onClick={() => setSelectedKB(kb)} style={{ display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer' }} className="kb-marquee-item">
                 <span style={{ fontSize: '10px', fontWeight: 900, color: 'var(--color-primary)', letterSpacing: '0.2em' }}>{kb.id}</span>
                 <span style={{ fontSize: '14px', fontWeight: 700, color: 'white' }}>{kb.title.toUpperCase()}</span>
                 <span style={{ color: 'rgba(255,255,255,0.2)' }}>//</span>
