@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, User, Zap, ArrowLeft, ArrowRight, Lock } from 'lucide-react';
-import { useTickets, Role, Department } from '../context/TicketContext';
+import { useTickets, type Role, type Department } from '../context/TicketContext';
 
 interface LandingPageProps {
   onLogin: () => void;

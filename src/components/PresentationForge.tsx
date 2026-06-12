@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTickets, Ticket, Department } from '../context/TicketContext';
+import { useTickets, type Ticket, type Department } from '../context/TicketContext';
 import NeuralConstellation from './NeuralConstellation';
 
 type CategoryType = 'low' | 'normal' | 'high' | 'emergency' | 'escalated' | 'closed';

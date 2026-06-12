@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, BookOpen, Shield, Zap, Terminal } from 'lucide-react';
-import { useTickets, KBArticle } from '../context/TicketContext';
+import { Search, BookOpen, Shield, Zap, Terminal, Plus } from 'lucide-react';
+import { useTickets, type KBArticle } from '../context/TicketContext';
 import KBArticleModal from './KBArticleModal';
+import NewKBArticleModal from './NewKBArticleModal';
 
 const CATEGORY_ICONS: Record<string, any> = {
     'OPTIMIZATION': Zap,
@@ -19,9 +20,12 @@ const getCategoryForArticle = (title: string): string => {
 };
 
 const KnowledgeBaseLibrary: React.FC = () => {
-  const { knowledgeBase } = useTickets();
+  const { knowledgeBase, currentUser } = useTickets();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedArticle, setSelectedArticle] = useState<KBArticle | null>(null);
+  const [isNewKBModalOpen, setIsNewKBModalOpen] = useState(false);
+
+  const isClient = currentUser?.role === 'client';
 
   const filteredArticles = knowledgeBase.filter(article => 
     article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -37,9 +41,20 @@ const KnowledgeBaseLibrary: React.FC = () => {
     >
       {/* Header & Search */}
       <div style={{ padding: '0 20px 30px 20px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div>
-            <h2 style={{ fontSize: '24px', fontWeight: 900, color: 'white', margin: 0, letterSpacing: '0.15em', textShadow: '0 0 20px rgba(255,255,255,0.2)' }}>NEURAL INSIGHTS ARCHIVE</h2>
-            <p style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255, 255, 255, 0.6)', marginTop: '8px', letterSpacing: '0.25em', textTransform: 'uppercase' }}>SYSTEM DOCUMENTATION // THREAT VECTORS // PROTOCOLS</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+                <h2 style={{ fontSize: '24px', fontWeight: 900, color: 'white', margin: 0, letterSpacing: '0.15em', textShadow: '0 0 20px rgba(255,255,255,0.2)' }}>NEURAL INSIGHTS ARCHIVE</h2>
+                <p style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255, 255, 255, 0.6)', marginTop: '8px', letterSpacing: '0.25em', textTransform: 'uppercase' }}>SYSTEM DOCUMENTATION // THREAT VECTORS // PROTOCOLS</p>
+            </div>
+            {!isClient && (
+                <button 
+                    className="primary-action-btn" 
+                    style={{ padding: '10px 20px', fontSize: '10px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}
+                    onClick={() => setIsNewKBModalOpen(true)}
+                >
+                    <Plus size={14} /> CREATE INSIGHT
+                </button>
+            )}
         </div>
 
         <div style={{ position: 'relative', maxWidth: '600px' }}>
@@ -123,6 +138,11 @@ const KnowledgeBaseLibrary: React.FC = () => {
       <KBArticleModal
         article={selectedArticle}
         onClose={() => setSelectedArticle(null)}
+      />
+
+      <NewKBArticleModal 
+        isOpen={isNewKBModalOpen}
+        onClose={() => setIsNewKBModalOpen(false)}
       />
     </motion.div>
   );

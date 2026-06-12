@@ -1,5 +1,41 @@
 [
   {
+    "id": "A-1781281073835",
+    "teamId": "TEAM-DEFAULT",
+    "type": "ticket_created",
+    "ticketId": "T-1005",
+    "ticketTitle": "TOO LONG FOR TICKETS",
+    "user": "Current User",
+    "timestamp": "2026-06-12T16:17:53.834Z",
+    "detail": "Ticket initialized.",
+    "severity": "critical",
+    "vector": "system"
+  },
+  {
+    "id": "A-1781281044203",
+    "teamId": "TEAM-DEFAULT",
+    "type": "status_change",
+    "ticketId": "T-1001",
+    "ticketTitle": "SYSTEM LATENCY IN NEURAL CORE",
+    "user": "anthonycyber",
+    "timestamp": "2026-06-12T16:17:24.203Z",
+    "detail": "Status changed to closed.",
+    "severity": "info",
+    "vector": "system"
+  },
+  {
+    "id": "A-1781011399799",
+    "teamId": "TEAM-DEFAULT",
+    "type": "status_change",
+    "ticketId": "T-1004",
+    "ticketTitle": "test",
+    "user": "anthonycyber",
+    "timestamp": "2026-06-09T13:23:19.799Z",
+    "detail": "Status changed to closed.",
+    "severity": "info",
+    "vector": "system"
+  },
+  {
     "id": "A-1780761201634",
     "teamId": "TEAM-DEFAULT",
     "type": "status_change",

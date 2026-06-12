@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertTriangle, CheckCircle, ArrowUpCircle } from 'lucide-react';
-import { useTickets, Ticket } from '../context/TicketContext';
+import { useTickets, type Ticket } from '../context/TicketContext';
 
 interface TicketDetailModalProps {
   ticket: Ticket | null;

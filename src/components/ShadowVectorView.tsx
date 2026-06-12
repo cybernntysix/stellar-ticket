@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, AlertCircle, AlertTriangle, Terminal, Info } from 'lucide-react';
-import { useTickets, Activity } from '../context/TicketContext';
+import { useTickets, type Activity } from '../context/TicketContext';
 
 const SEVERITY_COLORS = {
   critical: '#FF3B30',

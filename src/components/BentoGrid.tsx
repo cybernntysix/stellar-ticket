@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MoreVertical, Shield, AlertCircle, Filter, List, Eye, EyeOff } from 'lucide-react';
-import { useTickets, Ticket, Activity, KBArticle } from '../context/TicketContext';
+import { useTickets, type Ticket, type Activity, type KBArticle, getSLAStatus } from '../context/TicketContext';
 import NeuralConstellation from './NeuralConstellation';
 import NewTicketModal from './NewTicketModal';
 import TicketDetailModal from './TicketDetailModal';
@@ -67,6 +67,7 @@ const BentoGrid: React.FC<BentoGridProps> = ({ isCalibrationMode = false }) => {
 
   const isCyber = currentUser?.role === 'cybersecurity';
   const isClient = currentUser?.role === 'client';
+  const clientTickets = tickets.filter(t => t.department === currentUser?.department);
   
   // Safe layout prefs access
   const prefs = currentUser?.layoutPrefs || { showForge: true, showQueue: true, showLogs: !isClient, showKB: true };
@@ -133,27 +134,31 @@ const BentoGrid: React.FC<BentoGridProps> = ({ isCalibrationMode = false }) => {
         onToggleVisibility={() => handleTogglePref('showQueue')}
       >
         <div style={{ height: '100%', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', padding: '10px' }}>
-          {(isClient ? clientTickets : tickets).map(ticket => (
-            <div 
-                key={ticket.id} 
-                onClick={() => setArchiveTicketId(ticket.id)}
-                style={{ background: 'rgba(255,255,255,0.03)', borderLeft: `3px solid ${PRIORITY_COLORS[ticket.priority]}`, padding: '12px', borderRadius: '0 8px 8px 0', flexShrink: 0, cursor: 'pointer', transition: 'transform 0.2s' }}
-                className="ticket-queue-item"
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '10px', fontWeight: 900, color: 'white' }}>{ticket.id}</span>
-                <div style={{ display: 'flex', gap: '5px' }}>
-                    {!isClient && ticket.isEscalated && <span style={{ background: '#AF52DE', width: '6px', height: '6px', borderRadius: '50%' }} />}
-                    <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.4)' }}>{ticket.status.toUpperCase()}</span>
+          {(isClient ? clientTickets : tickets).map(ticket => {
+            const slaStatus = getSLAStatus(ticket);
+            return (
+                <div 
+                    key={ticket.id} 
+                    onClick={() => setArchiveTicketId(ticket.id)}
+                    style={{ background: 'rgba(255,255,255,0.03)', borderLeft: `3px solid ${PRIORITY_COLORS[ticket.priority]}`, padding: '12px', borderRadius: '0 8px 8px 0', flexShrink: 0, cursor: 'pointer', transition: 'transform 0.2s' }}
+                    className="ticket-queue-item"
+                >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 900, color: 'white' }}>{ticket.id}</span>
+                    <div style={{ display: 'flex', gap: '5px' }}>
+                        {!isClient && ticket.isEscalated && <span style={{ background: '#AF52DE', width: '6px', height: '6px', borderRadius: '50%' }} />}
+                        {!isClient && slaStatus === 'breached' && <span className="critical-breach-box" style={{ background: '#FF3B30', width: '6px', height: '6px', borderRadius: '50%' }} />}
+                        <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.4)' }}>{ticket.status.toUpperCase()}</span>
+                    </div>
                 </div>
-              </div>
-              <p style={{ fontSize: '12px', color: 'white', fontWeight: 600, margin: '5px 0' }}>{ticket.title}</p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: 'rgba(255,255,255,0.3)' }}>
-                <span style={{ color: 'var(--color-primary)' }}>{ticket.priority.toUpperCase()}</span>
-                <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
-              </div>
-            </div>
-          ))}
+                <p style={{ fontSize: '12px', color: 'white', fontWeight: 600, margin: '5px 0' }}>{ticket.title}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: 'rgba(255,255,255,0.3)' }}>
+                    <span style={{ color: 'var(--color-primary)' }}>{ticket.priority.toUpperCase()}</span>
+                    <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                </div>
+                </div>
+            );
+          })}
           {(isClient ? clientTickets : tickets).length === 0 && (
             <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.3 }}>
                 <p style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em' }}>NO NODES DETECTED</p>

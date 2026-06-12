@@ -1,0 +1,26 @@
+[
+  {
+    "id": "KB-1001",
+    "title": "OPTIMIZING NEURAL THROUGHPUT",
+    "content": "Guidelines for maximizing core performance and reducing node latency in high-demand environments. Ensure all auxiliary processes are suspended before initiating a core flush.",
+    "createdAt": "2026-06-09T13:31:04.677Z"
+  },
+  {
+    "id": "KB-1002",
+    "title": "SECURITY PROTOCOL 7",
+    "content": "Mandatory steps for handling unauthorized access attempts and isolating compromised sectors. Disconnect all external networking nodes immediately.",
+    "createdAt": "2026-06-09T13:31:04.678Z"
+  },
+  {
+    "id": "KB-1003",
+    "title": "BENTO GRID ALIGNMENT",
+    "content": "Fixing layout issues on fluid viewports and ensuring responsive element visibility. Verify CSS Grid constraints and remove static height definitions.",
+    "createdAt": "2026-06-09T13:31:04.678Z"
+  },
+  {
+    "id": "KB-1004",
+    "title": "MALWARE QUARANTINE",
+    "content": "Procedure for isolating suspicious binaries and initiating deep heuristic scans. Use the Shadow Vector terminal to trace execution origin.",
+    "createdAt": "2026-06-09T13:31:04.678Z"
+  }
+]

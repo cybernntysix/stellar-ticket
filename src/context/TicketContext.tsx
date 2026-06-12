@@ -15,6 +15,7 @@ export interface LayoutPrefs {
 export interface User {
   id: string;
   username: string;
+  name: string;
   role: Role;
   department: Department;
   teamId: string;
@@ -71,6 +72,24 @@ export interface KBArticle {
   content: string;
 }
 
+export const SLA_LIMITS = {
+  emergency: 1, // hours
+  high: 4,
+  normal: 24,
+  low: 48
+};
+
+export const getSLAStatus = (ticket: Ticket) => {
+  if (ticket.status === 'closed') return 'resolved';
+  const ageMs = Date.now() - new Date(ticket.createdAt).getTime();
+  const ageHours = ageMs / (1000 * 60 * 60);
+  const limit = SLA_LIMITS[ticket.priority];
+  
+  if (ageHours >= limit) return 'breached';
+  if (ageHours >= limit * 0.75) return 'warning';
+  return 'optimal';
+};
+
 interface TicketContextType {
   currentUser: User | null;
   isAuthenticated: boolean;
@@ -86,6 +105,7 @@ interface TicketContextType {
   addTask: (ticketId: string, description: string) => Promise<void>;
   toggleTaskCompletion: (ticketId: string, taskId: string) => Promise<void>;
   addSecurityEvent: (event: Omit<Activity, 'id' | 'timestamp' | 'type' | 'teamId'>) => Promise<void>;
+  addKBArticle: (title: string, content: string) => Promise<void>;
   updateLayoutPrefs: (prefs: Partial<LayoutPrefs>) => Promise<void>;
   login: (credentials: any) => Promise<void>;
   register: (data: any) => Promise<void>;
@@ -98,33 +118,43 @@ const TicketContext = createContext<TicketContextType | undefined>(undefined);
 
 export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    const savedUser = localStorage.getItem('stellar_user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+        const savedUser = localStorage.getItem('stellar_user');
+        if (savedUser && savedUser !== 'undefined') {
+            const parsed = JSON.parse(savedUser);
+            // Ensure legacy cached users get a default teamId
+            if (!parsed.teamId) parsed.teamId = 'TEAM-DEFAULT';
+            if (!parsed.layoutPrefs) parsed.layoutPrefs = { showForge: true, showQueue: true, showLogs: parsed.role !== 'client', showKB: true };
+            return parsed;
+        }
+        return null;
+    } catch (e) {
+        console.error('Failed to parse user from localStorage', e);
+        return null;
+    }
   });
   const isAuthenticated = currentUser !== null;
 
   const [departments] = useState<Department[]>(['IT', 'Security', 'Infrastructure', 'Research', 'HR']);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
-
-  const [knowledgeBase] = useState<KBArticle[]>([
-    { id: 'KB-1', title: 'OPTIMIZING NEURAL THROUGHPUT', content: 'Guidelines for maximizing core performance and reducing node latency in high-demand environments.' },
-    { id: 'KB-2', title: 'SECURITY PROTOCOL 7', content: 'Mandatory steps for handling unauthorized access attempts and isolating compromised sectors.' },
-    { id: 'KB-3', title: 'BENTO GRID ALIGNMENT', content: 'Fixing layout issues on fluid viewports and ensuring responsive element visibility.' },
-    { id: 'KB-4', title: 'MALWARE QUARANTINE', content: 'Procedure for isolating suspicious binaries and initiating deep heuristic scans.' }
-  ]);
+  const [knowledgeBase, setKnowledgeBase] = useState<KBArticle[]>([]);
 
   const refreshData = async () => {
     if (!currentUser) return;
     try {
-        const [ticketsRes, activitiesRes] = await Promise.all([
+        const [ticketsRes, activitiesRes, kbRes] = await Promise.all([
             fetch(`${API_BASE}/tickets?teamId=${currentUser.teamId}`),
-            fetch(`${API_BASE}/activities?teamId=${currentUser.teamId}`)
+            fetch(`${API_BASE}/activities?teamId=${currentUser.teamId}`),
+            fetch(`${API_BASE}/kb`)
         ]);
         const ticketsData = await ticketsRes.json();
         const activitiesData = await activitiesRes.json();
+        const kbData = await kbRes.json();
+        
         setTickets(ticketsData);
         setActivities(activitiesData);
+        setKnowledgeBase(kbData);
     } catch (err) {
         console.error('BACKEND_FETCH_ERROR:', err);
     }
@@ -308,6 +338,18 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch (err) { console.error(err); }
   };
 
+  const addKBArticle = async (title: string, content: string) => {
+    if (!currentUser) return;
+    try {
+        await fetch(`${API_BASE}/kb`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, content })
+        });
+        await refreshData();
+    } catch (err) { console.error(err); }
+  };
+
   // Only keeping this temporarily to not break components that might still call it.
   const switchRole = (role: Role) => {
     if (currentUser) {
@@ -321,7 +363,7 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     <TicketContext.Provider value={{ 
         currentUser, isAuthenticated, tickets, activities, knowledgeBase, departments, 
         addTicket, updateTicketStatus, toggleEscalation, assignTicket, addComment, 
-        addTask, toggleTaskCompletion, addSecurityEvent, updateLayoutPrefs, login, register, logout, refreshData, switchRole 
+        addTask, toggleTaskCompletion, addSecurityEvent, addKBArticle, updateLayoutPrefs, login, register, logout, refreshData, switchRole 
     }}>
       {children}
     </TicketContext.Provider>

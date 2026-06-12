@@ -1,16 +1,30 @@
 [
   {
-    "title": "test",
-    "description": "test ticket",
+    "title": "TOO LONG FOR TICKETS",
+    "description": "Close all Tickets",
     "priority": "emergency",
     "department": "Security",
     "user": "Current User",
     "status": "open",
     "teamId": "TEAM-DEFAULT",
+    "id": "T-1005",
+    "createdAt": "2026-06-12T16:17:53.834Z",
+    "comments": [],
+    "isEscalated": false
+  },
+  {
+    "title": "test",
+    "description": "test ticket",
+    "priority": "emergency",
+    "department": "Security",
+    "user": "Current User",
+    "status": "closed",
+    "teamId": "TEAM-DEFAULT",
     "id": "T-1004",
     "createdAt": "2026-06-06T15:48:47.298Z",
     "comments": [],
-    "isEscalated": false
+    "isEscalated": false,
+    "modifier": "anthonycyber"
   },
   {
     "id": "T-1001",
@@ -18,7 +32,7 @@
     "title": "SYSTEM LATENCY IN NEURAL CORE",
     "description": "The neural core is experiencing significant lag during high-load processing cycles.",
     "priority": "high",
-    "status": "open",
+    "status": "closed",
     "isEscalated": false,
     "user": "Alpha-01",
     "department": "Infrastructure",
@@ -30,7 +44,8 @@
         "text": "Auto-detected latency spike.",
         "timestamp": "2026-06-06T12:44:29.434Z"
       }
-    ]
+    ],
+    "modifier": "anthonycyber"
   },
   {
     "id": "T-1002",

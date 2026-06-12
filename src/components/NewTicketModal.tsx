@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send } from 'lucide-react';
-import { useTickets, Ticket } from '../context/TicketContext';
+import { useTickets, type Ticket } from '../context/TicketContext';
 
 interface NewTicketModalProps {
   isOpen: boolean;

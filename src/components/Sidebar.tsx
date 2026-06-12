@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layers, Ticket, BookOpen, Settings, Zap, Shield, User, Sliders, LogOut, RotateCcw } from 'lucide-react';
-import { useTickets, Role } from '../context/TicketContext';
+import { useTickets, type Role } from '../context/TicketContext';
 
 interface SidebarProps {
   setComposerMode: (mode: string | null) => void;
@@ -145,10 +145,12 @@ const Sidebar: React.FC<SidebarProps> = ({ setComposerMode, setPresentationMode,
           <button 
             className="sidebar-btn" 
             onClick={() => {
-                if (setComposerMode) setComposerMode(null);
-                if (setPresentationMode) setPresentationMode(false);
-                if (setIsCalibrationMode) setIsCalibrationMode(false);
                 logout();
+                setTimeout(() => {
+                    if (setComposerMode) setComposerMode(null);
+                    if (setPresentationMode) setPresentationMode(false);
+                    if (setIsCalibrationMode) setIsCalibrationMode(false);
+                }, 100);
             }}
             style={{ width: '100%', display: 'flex', justifyContent: 'center', color: 'rgba(255,255,255,0.5)', border: 'none', background: 'transparent' }}
           >

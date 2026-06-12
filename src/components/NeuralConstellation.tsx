@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTickets, Ticket, Department } from '../context/TicketContext';
+import { useTickets, type Ticket, type Department, getSLAStatus } from '../context/TicketContext';
 
 interface TicketNode extends Ticket {
   x: number;
@@ -200,6 +200,7 @@ const NeuralConstellation: React.FC<NeuralConstellationProps> = ({ department = 
           const isHovered = hoveredNodeId === node.id;
           const isMobile = window.innerWidth < 768;
           const color = PRIORITY_COLORS[node.priority];
+          const slaStatus = getSLAStatus(node);
 
           return (
             <div key={node.id} style={{
@@ -219,9 +220,14 @@ const NeuralConstellation: React.FC<NeuralConstellationProps> = ({ department = 
                     style={{ position: 'absolute', top: isMobile ? -7 : -15, left: isMobile ? -7 : -15, width: isMobile ? 20 : 40, height: isMobile ? 20 : 40, background: color, borderRadius: '50%', filter: 'blur(10px)' }} 
                   />
                 )}
+                {slaStatus === 'breached' && !isHovered && (
+                  <motion.div animate={{ scale: [1, 2.5, 1], opacity: [0.8, 0, 0.8] }} transition={{ duration: 1, repeat: Infinity }} 
+                    style={{ position: 'absolute', inset: 0, border: '1px solid #FF3B30', borderRadius: '50%' }} 
+                  />
+                )}
               </div>
               <span style={{ 
-                fontSize: isMobile ? '8px' : '10px', fontWeight: 900, color: isHovered ? '#ffffff' : 'rgba(255,255,255,0.5)', 
+                fontSize: isMobile ? '8px' : '10px', fontWeight: 900, color: isHovered ? '#ffffff' : (slaStatus === 'breached' ? '#FF3B30' : 'rgba(255,255,255,0.5)'), 
                 letterSpacing: '0.25em', textTransform: 'uppercase', marginTop: '12px', 
                 textShadow: '0 0 20px rgba(0,0,0,1)', whiteSpace: 'nowrap'
               }}>{node.id}</span>

@@ -98,3 +98,13 @@ This document provides a chronological record of the visual and functional trans
 ## [Interval 21] Session Persistence & Secure Logout
 - **Persistent State**: Wired the authentication context to the browser's `localStorage` API. The application now saves the user's active session, allowing for page refreshes without returning to the landing page.
 - **Secure Logout**: Implemented a global 'System Logout' button that clears the user's local session and forcefully returns them to the secure gateway.
+
+## [Interval 22] SLA Monitoring & Breach Timers
+- **Dynamic SLA Calculation**: Implemented a robust time-based SLA engine in `TicketContext` that checks ticket age against priority-based limits (e.g., Emergency = 1H, Normal = 24H).
+- **Node Aging Progress**: Overhauled the 'NODE AGING' section in the Authority Archive into a dynamic SLA Progress Bar, calculating the exact percentage of time exhausted before a breach.
+- **Visual Urgency**: Breached tickets now trigger aggressive visual alerts across the UI, including pulsing red rings in the Neural Constellation and flashing status dots in the Active Queue.
+
+## [Interval 23] Knowledge Base Authoring (CMS)
+- **Content Management API**: Expanded the backend server to support a dedicated `kb.json` file and a `POST /api/kb` route for permanent article storage.
+- **Authoring Suite**: Created `NewKBArticleModal.tsx`, a cinematic input form for Support and Cyber staff to draft and publish new protocols.
+- **Live Publishing**: Integrated the 'CREATE INSIGHT' button into the Knowledge Base Library. New protocols instantly appear in the library grid and begin circulating on the dashboard marquee across all client sessions.

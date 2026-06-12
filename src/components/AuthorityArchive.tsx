@@ -5,7 +5,7 @@ import {
     User, MessageSquare, List, Clock, Zap, 
     UserPlus, Share2, Edit3, MoreHorizontal, Globe, Calendar
 } from 'lucide-react';
-import { useTickets, Ticket } from '../context/TicketContext';
+import { useTickets, type Ticket, getSLAStatus, SLA_LIMITS } from '../context/TicketContext';
 
 interface AuthorityArchiveProps {
   ticketId: string | null;
@@ -41,6 +41,12 @@ const AuthorityArchive: React.FC<AuthorityArchiveProps> = ({ ticketId, onClose }
   const handleClaim = () => {
     assignTicket(ticket.id, ticket.assignedTo === currentUser.name ? null : currentUser.name);
   };
+
+  const slaStatus = getSLAStatus(ticket);
+  const ageHours = (Date.now() - new Date(ticket.createdAt).getTime()) / (1000 * 60 * 60);
+  const limit = SLA_LIMITS[ticket.priority];
+  const progressPercent = Math.min(100, (ageHours / limit) * 100);
+  const slaColor = slaStatus === 'breached' ? '#FF3B30' : slaStatus === 'warning' ? '#FF9500' : 'var(--color-primary)';
 
   const MetaItem = ({ label, value, icon: Icon, color = 'white' }: any) => (
     <div style={{ flex: 1, minWidth: '150px', background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
@@ -223,11 +229,16 @@ const AuthorityArchive: React.FC<AuthorityArchiveProps> = ({ ticketId, onClose }
                                         </div>
                                     </div>
                                     
-                                    <div style={{ padding: '25px', borderLeft: '2px solid rgba(255,255,255,0.1)' }}>
-                                        <span className="section-label" style={{ fontSize: '8px' }}>NODE AGING</span>
-                                        <p style={{ fontSize: '18px', fontWeight: 900, color: 'white', margin: '5px 0' }}>{Math.floor((Date.now() - new Date(ticket.createdAt).getTime()) / (1000 * 60 * 60))}H ACTIVE</p>
+                                    <div style={{ padding: '25px', borderLeft: `2px solid ${slaStatus === 'breached' ? 'rgba(255, 59, 48, 0.4)' : 'rgba(255,255,255,0.1)'}` }}>
+                                        <span className="section-label" style={{ fontSize: '8px' }}>SLA MONITOR // {limit}H LIMIT</span>
+                                        <p style={{ fontSize: '18px', fontWeight: 900, color: slaColor, margin: '5px 0' }}>{ageHours.toFixed(1)}H / {limit}H</p>
+                                        <span style={{ fontSize: '9px', color: slaColor, fontWeight: 700, letterSpacing: '0.1em' }}>{slaStatus.toUpperCase()}</span>
                                         <div style={{ height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden', marginTop: '10px' }}>
-                                            <div style={{ height: '100%', background: 'var(--color-primary)', width: '40%' }} />
+                                            <motion.div 
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${progressPercent}%` }}
+                                                style={{ height: '100%', background: slaColor }} 
+                                            />
                                         </div>
                                     </div>
                                 </div>

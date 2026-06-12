@@ -14,6 +14,7 @@ const TICKETS_FILE = path.join(DATA_DIR, 'tickets.json');
 const ACTIVITIES_FILE = path.join(DATA_DIR, 'activities.json');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const TEAMS_FILE = path.join(DATA_DIR, 'teams.json');
+const KB_FILE = path.join(DATA_DIR, 'kb.json');
 
 fs.ensureDirSync(DATA_DIR);
 
@@ -348,6 +349,33 @@ app.post('/api/activities', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// --- KNOWLEDGE BASE API ---
+
+app.get('/api/kb', async (req, res) => {
+    try {
+        const kb = await readJsonFile(KB_FILE);
+        res.json(kb);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/kb', async (req, res) => {
+    try {
+        const { title, content } = req.body;
+        const kb = await readJsonFile(KB_FILE);
+        
+        const newArticle = {
+            id: `KB-${1000 + kb.length + 1}`,
+            title,
+            content,
+            createdAt: new Date().toISOString()
+        };
+        
+        kb.unshift(newArticle);
+        await writeJsonFile(KB_FILE, kb);
+        res.json(newArticle);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // --- SEEDING (FOR INITIAL STARTUP) ---
 const seedData = async () => {
     const DEFAULT_TEAM_ID = 'TEAM-DEFAULT';
@@ -432,6 +460,16 @@ const seedData = async () => {
             }
         ];
         await writeJsonFile(ACTIVITIES_FILE, initialActivities);
+    }
+
+    if (!(await fs.pathExists(KB_FILE))) {
+        const initialKB = [
+            { id: 'KB-1001', title: 'OPTIMIZING NEURAL THROUGHPUT', content: 'Guidelines for maximizing core performance and reducing node latency in high-demand environments. Ensure all auxiliary processes are suspended before initiating a core flush.', createdAt: new Date().toISOString() },
+            { id: 'KB-1002', title: 'SECURITY PROTOCOL 7', content: 'Mandatory steps for handling unauthorized access attempts and isolating compromised sectors. Disconnect all external networking nodes immediately.', createdAt: new Date().toISOString() },
+            { id: 'KB-1003', title: 'BENTO GRID ALIGNMENT', content: 'Fixing layout issues on fluid viewports and ensuring responsive element visibility. Verify CSS Grid constraints and remove static height definitions.', createdAt: new Date().toISOString() },
+            { id: 'KB-1004', title: 'MALWARE QUARANTINE', content: 'Procedure for isolating suspicious binaries and initiating deep heuristic scans. Use the Shadow Vector terminal to trace execution origin.', createdAt: new Date().toISOString() }
+        ];
+        await writeJsonFile(KB_FILE, initialKB);
     }
 };
 

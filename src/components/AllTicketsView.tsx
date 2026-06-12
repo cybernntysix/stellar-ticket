@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Filter, Shield, AlertTriangle, User, ArrowRight } from 'lucide-react';
-import { useTickets, Ticket } from '../context/TicketContext';
+import { useTickets, type Ticket } from '../context/TicketContext';
 import AuthorityArchive from './AuthorityArchive';
 
 const PRIORITY_COLORS = {
