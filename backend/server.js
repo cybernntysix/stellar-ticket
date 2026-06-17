@@ -8,6 +8,10 @@ const crypto = require('crypto');
 const app = express();
 const PORT = process.env.PORT || 3041;
 
+// Security Packages
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
 // --- CONFIG & STORAGE ---
 const DATA_DIR = path.join(__dirname, 'data');
 const TICKETS_FILE = path.join(DATA_DIR, 'tickets.json');
@@ -18,7 +22,31 @@ const KB_FILE = path.join(DATA_DIR, 'kb.json');
 
 fs.ensureDirSync(DATA_DIR);
 
-app.use(cors());
+// 1. HTTP Security Headers
+app.use(helmet());
+
+// 2. Strict CORS Policy (Anti-Scraping)
+app.use(cors({
+    origin: function(origin, callback) {
+        // Allow Vercel, Render, Localhost, or no origin (e.g., server-to-server)
+        if (!origin || origin.includes('localhost') || origin.includes('vercel.app') || origin.includes('onrender.com')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Network request blocked by strict CORS policy.'));
+        }
+    }
+}));
+
+// 3. Rate Limiting (DDoS & Spam Protection)
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 150, // Limit each IP to 150 requests per window
+    message: { error: 'Strict Rate Limit Exceeded. Security anomaly logged.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use('/api', apiLimiter);
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
