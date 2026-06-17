@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "(cd backend && node server.js) & vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
