@@ -1,16 +1,41 @@
 [
   {
+    "title": "test",
+    "description": "test",
+    "priority": "emergency",
+    "department": "Security",
+    "user": "Current User",
+    "status": "closed",
+    "teamId": "TEAM-DEFAULT",
+    "id": "T-1006",
+    "createdAt": "2026-06-17T06:49:44.120Z",
+    "comments": [
+      {
+        "user": "anthonycyber",
+        "text": "this ticket has been resolved.",
+        "isInternal": false,
+        "id": "C-1781679006851",
+        "timestamp": "2026-06-17T06:50:06.851Z"
+      }
+    ],
+    "isEscalated": false,
+    "assignedTo": "anthonycyber",
+    "modifier": "anthonycyber"
+  },
+  {
     "title": "TOO LONG FOR TICKETS",
     "description": "Close all Tickets",
     "priority": "emergency",
     "department": "Security",
     "user": "Current User",
-    "status": "open",
+    "status": "closed",
     "teamId": "TEAM-DEFAULT",
     "id": "T-1005",
     "createdAt": "2026-06-12T16:17:53.834Z",
     "comments": [],
-    "isEscalated": false
+    "isEscalated": false,
+    "modifier": "anthonycyber",
+    "assignedTo": "anthonycyber"
   },
   {
     "title": "test",
@@ -53,12 +78,21 @@
     "title": "UI GLITCH IN BENTO GRID",
     "description": "Bento boxes are not aligning correctly on mobile viewports.",
     "priority": "normal",
-    "status": "open",
+    "status": "closed",
     "isEscalated": true,
     "user": "Beta-02",
     "department": "IT",
     "createdAt": "2026-06-06T09:44:29.434Z",
-    "comments": []
+    "comments": [
+      {
+        "user": "anthonycyber",
+        "text": "jlkfjsdsd",
+        "isInternal": false,
+        "id": "C-1781281430564",
+        "timestamp": "2026-06-12T16:23:50.564Z"
+      }
+    ],
+    "modifier": "anthonycyber"
   },
   {
     "id": "T-1003",
@@ -66,7 +100,7 @@
     "title": "CRITICAL SECURITY BREACH ATTEMPT",
     "description": "Detected unauthorized access attempt from external node 192.168.1.50.",
     "priority": "emergency",
-    "status": "open",
+    "status": "closed",
     "isEscalated": true,
     "user": "Sentinel-X",
     "department": "Security",

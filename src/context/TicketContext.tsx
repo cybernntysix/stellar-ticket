@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 export type Role = 'client' | 'support_tier_1' | 'support_tier_2' | 'manager' | 'developer' | 'cybersecurity';
 export type Department = 'IT' | 'Security' | 'Infrastructure' | 'Research' | 'HR';
 
-const API_BASE = 'http://localhost:3041/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3041/api';
 
 export interface LayoutPrefs {
   showForge: boolean;
