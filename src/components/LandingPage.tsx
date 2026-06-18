@@ -9,16 +9,16 @@ interface LandingPageProps {
 }
 
 const BADGES = [
-  '/assets/dossier/google-cybersecurity-professional-certificate-v2.png',
-  '/assets/dossier/cyber-threat-intelligence.png',
-  '/assets/dossier/introduction-to-cybersecurity-tools-cyber-attacks.png',
-  '/assets/dossier/network-security-database-vulnerabilities.png',
-  '/assets/dossier/penetration-testing-incident-response-and-forensics.png',
-  '/assets/dossier/cybersecurity-roles-processes-operating-system-security.png',
-  '/assets/dossier/operating-systems-basics.png',
-  '/assets/dossier/computer-hardware-basics.png',
-  '/assets/dossier/engaging-stakeholders-for-success.png',
-  '/assets/dossier/creating-compelling-reports.png'
+  '/assets/dossier/badges/google-cybersecurity-professional-certificate-v2.png',
+  '/assets/dossier/badges/cyber-threat-intelligence.png',
+  '/assets/dossier/badges/introduction-to-cybersecurity-tools-cyber-attacks.png',
+  '/assets/dossier/badges/network-security-database-vulnerabilities.png',
+  '/assets/dossier/badges/penetration-testing-incident-response-and-forensics.png',
+  '/assets/dossier/badges/cybersecurity-roles-processes-operating-system-security.png',
+  '/assets/dossier/badges/operating-systems-basics.png',
+  '/assets/dossier/badges/computer-hardware-basics.png',
+  '/assets/dossier/badges/engaging-stakeholders-for-success.png',
+  '/assets/dossier/badges/creating-compelling-reports.png'
 ];
 
 const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
