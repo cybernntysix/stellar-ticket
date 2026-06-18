@@ -119,14 +119,34 @@ const TicketContext = createContext<TicketContextType | undefined>(undefined);
 export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     try {
-        const savedUser = localStorage.getItem('stellar_user');
-        if (savedUser && savedUser !== 'undefined') {
-            const parsed = JSON.parse(savedUser);
+        const savedSession = localStorage.getItem('stellar_session');
+        if (savedSession && savedSession !== 'undefined') {
+            const parsedSession = JSON.parse(savedSession);
+            
+            // SESSION TIMEOUT LOGIC (2 Hours = 7200000 ms)
+            const sessionAge = Date.now() - parsedSession.timestamp;
+            if (sessionAge > 7200000) {
+                console.warn('Session expired. Forcing re-authentication.');
+                localStorage.removeItem('stellar_session');
+                return null;
+            }
+
+            const parsed = parsedSession.user;
             // Ensure legacy cached users get a default teamId
             if (!parsed.teamId) parsed.teamId = 'TEAM-DEFAULT';
             if (!parsed.layoutPrefs) parsed.layoutPrefs = { showForge: true, showQueue: true, showLogs: parsed.role !== 'client', showKB: true };
             return parsed;
         }
+        
+        // Backward compatibility for old 'stellar_user' key
+        const legacyUser = localStorage.getItem('stellar_user');
+        if (legacyUser && legacyUser !== 'undefined') {
+            localStorage.removeItem('stellar_user');
+            const parsed = JSON.parse(legacyUser);
+            localStorage.setItem('stellar_session', JSON.stringify({ user: parsed, timestamp: Date.now() }));
+            return parsed;
+        }
+
         return null;
     } catch (e) {
         console.error('Failed to parse user from localStorage', e);
@@ -186,7 +206,7 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           layoutPrefs: userData.layoutPrefs
       };
       setCurrentUser(userObj);
-      localStorage.setItem('stellar_user', JSON.stringify(userObj));
+      localStorage.setItem('stellar_session', JSON.stringify({ user: userObj, timestamp: Date.now() }));
   };
 
   const register = async (data: any) => {
@@ -210,14 +230,15 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           layoutPrefs: userData.layoutPrefs
       };
       setCurrentUser(userObj);
-      localStorage.setItem('stellar_user', JSON.stringify(userObj));
+      localStorage.setItem('stellar_session', JSON.stringify({ user: userObj, timestamp: Date.now() }));
   };
 
   const logout = () => {
       setCurrentUser(null);
       setTickets([]);
       setActivities([]);
-      localStorage.removeItem('stellar_user');
+      localStorage.removeItem('stellar_session');
+      localStorage.removeItem('stellar_user'); // Clean up legacy
   };
 
   const updateLayoutPrefs = async (prefs: Partial<LayoutPrefs>) => {
@@ -235,7 +256,7 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 layoutPrefs: updatedUser.layoutPrefs
             };
             setCurrentUser(userObj);
-            localStorage.setItem('stellar_user', JSON.stringify(userObj));
+            localStorage.setItem('stellar_session', JSON.stringify({ user: userObj, timestamp: Date.now() }));
         }
     } catch (err) { console.error(err); }
   };
@@ -355,7 +376,7 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (currentUser) {
        const updatedUser = { ...currentUser, role };
        setCurrentUser(updatedUser);
-       localStorage.setItem('stellar_user', JSON.stringify(updatedUser));
+       localStorage.setItem('stellar_session', JSON.stringify({ user: updatedUser, timestamp: Date.now() }));
     }
   };
 

@@ -1,11 +1,14 @@
 import React from 'react';
-import { Moon, Sun, Download } from 'lucide-react';
+import { Moon, Sun, Download, ArrowLeft } from 'lucide-react';
+import { useTickets } from '../context/TicketContext';
 
 interface DashboardHeaderProps {
   setShowInitialUpload: (show: boolean) => void;
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = () => {
+  const { logout } = useTickets();
+
   return (
     <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', padding: '0 10px' }}>
       <div>
@@ -13,6 +16,13 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = () => {
         <p className="dashboard-subtitle">COMMAND & CONTROL // SYSTEM ORCHESTRATION</p>
       </div>
       <div style={{ display: 'flex', gap: '15px' }}>
+        <button 
+            className="sidebar-btn" 
+            onClick={logout}
+            style={{ margin: 0, padding: '12px 24px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-primary)', borderColor: 'var(--color-primary)' }}
+        >
+            <ArrowLeft size={14} /> PORTFOLIO
+        </button>
         <button className="placeholder-button export-btn glass-panel" style={{ padding: '12px 24px', fontSize: '11px' }}>
           <Download size={14} style={{ marginRight: '8px' }} /> SYSTEM EXPORT
         </button>
