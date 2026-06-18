@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, User, Zap, ArrowLeft, ArrowRight, Lock, FileText, Award, Camera } from 'lucide-react';
+import { Shield, User, Zap, ArrowLeft, ArrowRight, Lock, FileText, Award, Camera, MonitorPlay } from 'lucide-react';
 import { useTickets, type Role, type Department } from '../context/TicketContext';
 
 interface LandingPageProps {
@@ -22,10 +22,9 @@ const BADGES = [
 
 const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
   const { login, register } = useTickets();
-  const [activeTab, setActiveTab] = useState<'access' | 'docs' | 'gallery' | 'credentials'>('access');
+  const [isDemoLaunched, setIsDemoLaunched] = useState(false);
   const [view, setView] = useState<'roles' | 'login' | 'register'>('roles');
   const [selectedRole, setSelectedRole] = useState<Role>('client');
-  const [currentBadgeIndex, setCurrentBadgeIndex] = useState(0);
   
   // Form State
   const [username, setUsername] = useState('');
@@ -34,15 +33,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
   const [teamId, setTeamId] = useState('');
   const [department, setDepartment] = useState<Department>('IT');
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    if (activeTab === 'credentials') {
-      const interval = setInterval(() => {
-        setCurrentBadgeIndex((prev) => (prev + 1) % BADGES.length);
-      }, 2500);
-      return () => clearInterval(interval);
-    }
-  }, [activeTab]);
 
   const handleRoleSelect = (role: Role) => {
     setSelectedRole(role);
@@ -74,328 +64,222 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
       }
   };
 
+  if (isDemoLaunched) {
+      return (
+        <div style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0, 0, 0, 0.85)', backdropFilter: 'blur(20px)', zIndex: 100,
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'white'
+        }}>
+            <button 
+                onClick={() => setIsDemoLaunched(false)} 
+                style={{ position: 'absolute', top: '40px', left: '40px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em' }}
+            >
+                <ArrowLeft size={16} /> RETURN TO PORTFOLIO
+            </button>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: 'center', marginBottom: '40px' }}>
+                <h1 style={{ fontSize: '32px', fontWeight: 900, letterSpacing: '0.3em', margin: '0 0 10px 0', textShadow: '0 0 30px rgba(255,255,255,0.3)' }}>STELLAR TICKET</h1>
+                <p style={{ color: 'var(--color-primary)', fontSize: '10px', fontWeight: 900, letterSpacing: '0.5em', margin: 0 }}>LIVE CAPSTONE DEMONSTRATION</p>
+            </motion.div>
+
+            <AnimatePresence mode="wait">
+                {view === 'roles' ? (
+                    <motion.div 
+                        key="roles" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+                        style={{ display: 'flex', gap: '30px', flexWrap: 'wrap', justifyContent: 'center' }}
+                    >
+                        <div 
+                            className="glass-panel" onClick={() => handleRoleSelect('client')}
+                            style={{ padding: '40px', width: '240px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', cursor: 'pointer', background: 'rgba(255,255,255,0.02)', transition: 'all 0.3s' }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+                        >
+                            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={24} /></div>
+                            <div style={{ textAlign: 'center' }}>
+                                <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>CLIENT PORTAL</h3>
+                                <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', margin: 0 }}>SUBMIT & TRACK NODES</p>
+                            </div>
+                        </div>
+
+                        <div 
+                            className="glass-panel" onClick={() => handleRoleSelect('support_tier_1')}
+                            style={{ padding: '40px', width: '240px', borderRadius: '24px', border: '1px solid rgba(0,122,255,0.3)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', cursor: 'pointer', background: 'rgba(0,122,255,0.05)', transition: 'all 0.3s', boxShadow: '0 0 30px rgba(0,122,255,0.1)' }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,122,255,0.1)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,122,255,0.05)'}
+                        >
+                            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px var(--color-primary)' }}><Zap size={24} color="white" /></div>
+                            <div style={{ textAlign: 'center' }}>
+                                <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>IT PORTAL</h3>
+                                <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', margin: 0 }}>RESOLVE & ORCHESTRATE</p>
+                            </div>
+                        </div>
+
+                        <div 
+                            className="glass-panel" onClick={() => handleRoleSelect('cybersecurity')}
+                            style={{ padding: '40px', width: '240px', borderRadius: '24px', border: '1px solid rgba(255,59,48,0.3)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', cursor: 'pointer', background: 'rgba(255,59,48,0.05)', transition: 'all 0.3s', boxShadow: '0 0 30px rgba(255,59,48,0.1)' }}
+                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,59,48,0.1)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,59,48,0.05)'}
+                        >
+                            <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#FF3B30', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px #FF3B30' }}><Shield size={24} color="white" /></div>
+                            <div style={{ textAlign: 'center' }}>
+                                <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>SECURITY PORTAL</h3>
+                                <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', margin: 0 }}>THREAT MONITORING</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="auth-form" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+                        className="glass-panel" style={{ width: '400px', padding: '40px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.5)' }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px' }}>
+                            <button onClick={() => setView('roles')} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}><ArrowLeft size={16} /> BACK</button>
+                            <span style={{ fontSize: '10px', fontWeight: 900, color: 'var(--color-primary)', letterSpacing: '0.2em' }}>{selectedRole.toUpperCase()} ACCESS</span>
+                        </div>
+
+                        <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                            <div>
+                                <label style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', display: 'block', marginBottom: '8px', letterSpacing: '0.1em' }}>USERNAME</label>
+                                <input type="text" required value={username} onChange={e => setUsername(e.target.value)} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: 'white', fontSize: '14px', outline: 'none' }} />
+                            </div>
+                            <div>
+                                <label style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)', display: 'block', marginBottom: '8px', letterSpacing: '0.1em' }}>PASSWORD</label>
+                                <div style={{ position: 'relative' }}>
+                                    <Lock size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)' }} />
+                                    <input type="password" required value={password} onChange={e => setPassword(e.target.value)} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px 12px 12px 35px', color: 'white', fontSize: '14px', outline: 'none' }} />
+                                </div>
+                            </div>
+
+                            {view === 'register' && (
+                                <>
+                                    <select value={department} onChange={e => setDepartment(e.target.value as Department)} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: 'white', fontSize: '14px', outline: 'none', appearance: 'none' }}>
+                                        <option value="IT">IT SUPPORT</option>
+                                        <option value="Security">SECURITY</option>
+                                        <option value="Infrastructure">INFRASTRUCTURE</option>
+                                    </select>
+                                    <input type="text" placeholder="Enter Team ID to join..." value={teamId} onChange={e => { setTeamId(e.target.value); setTeamName(''); }} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: 'white', fontSize: '14px', outline: 'none', marginBottom: '10px' }} />
+                                    <input type="text" placeholder="New Team Name..." value={teamName} onChange={e => { setTeamName(e.target.value); setTeamId(''); }} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: 'white', fontSize: '14px', outline: 'none' }} />
+                                </>
+                            )}
+
+                            {error && <div style={{ color: '#FF3B30', fontSize: '12px', textAlign: 'center', fontWeight: 700 }}>{error}</div>}
+                            <button type="submit" className="primary-action-btn" style={{ width: '100%', padding: '15px', fontSize: '11px', fontWeight: 900, marginTop: '10px' }}>
+                                {view === 'login' ? 'AUTHENTICATE' : 'INITIALIZE CREDENTIALS'}
+                            </button>
+                        </form>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+      );
+  }
+
   return (
     <div style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0, 0, 0, 0.75)',
+      position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+      background: 'rgba(0, 0, 0, 0.4)',
       backdropFilter: 'blur(10px)',
       zIndex: 100,
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      color: 'white'
+      display: 'flex', flexDirection: 'column',
+      color: 'white',
+      overflowY: 'auto',
+      padding: '60px 20px'
     }}>
+        {/* HERO HEADER */}
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            style={{ textAlign: 'center', marginBottom: '40px' }}
+            style={{ textAlign: 'center', marginBottom: '60px', marginTop: '40px' }}
         >
-            <h1 style={{ fontSize: '48px', fontWeight: 900, letterSpacing: '0.3em', margin: '0 0 10px 0', textShadow: '0 0 30px rgba(255,255,255,0.3)' }}>STELLAR TICKET</h1>
-            <p style={{ color: 'var(--color-primary)', fontSize: '12px', fontWeight: 900, letterSpacing: '0.5em', margin: 0 }}>NEURAL INCIDENT MANAGEMENT SYSTEM</p>
+            <h1 style={{ fontSize: 'clamp(40px, 6vw, 72px)', fontWeight: 900, letterSpacing: '0.1em', margin: '0 0 10px 0', textShadow: '0 0 40px rgba(255,255,255,0.4)' }}>ANTHONY CURRIE</h1>
+            <p style={{ color: 'var(--color-primary)', fontSize: 'clamp(12px, 2vw, 18px)', fontWeight: 900, letterSpacing: '0.4em', margin: 0, textShadow: '0 0 20px var(--color-primary)' }}>IT SUPPORT SPECIALIST</p>
         </motion.div>
 
-        {/* Portfolio Navigation */}
-        <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            style={{ display: 'flex', gap: '20px', marginBottom: '50px', background: 'rgba(255,255,255,0.02)', padding: '10px 20px', borderRadius: '30px', border: '1px solid rgba(255,255,255,0.05)' }}
-        >
-            <button onClick={() => { setActiveTab('access'); setView('roles'); }} className={`sidebar-btn ${activeTab === 'access' ? 'active' : ''}`} style={{ margin: 0, padding: '10px 20px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '10px', background: 'transparent' }}>
-                <Lock size={14} /> SYSTEM ACCESS
-            </button>
-            <button onClick={() => setActiveTab('docs')} className={`sidebar-btn ${activeTab === 'docs' ? 'active' : ''}`} style={{ margin: 0, padding: '10px 20px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '10px', background: 'transparent' }}>
-                <FileText size={14} /> DOCUMENTATION
-            </button>
-            <button onClick={() => setActiveTab('gallery')} className={`sidebar-btn ${activeTab === 'gallery' ? 'active' : ''}`} style={{ margin: 0, padding: '10px 20px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '10px', background: 'transparent' }}>
-                <Camera size={14} /> FIELD OPERATIONS
-            </button>
-            <button onClick={() => setActiveTab('credentials')} className={`sidebar-btn ${activeTab === 'credentials' ? 'active' : ''}`} style={{ margin: 0, padding: '10px 20px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '10px', background: 'transparent' }}>
-                <Award size={14} /> CREDENTIALS
-            </button>
-        </motion.div>
-
-        <AnimatePresence mode="wait">
-            {activeTab === 'access' && view === 'roles' && (
-                <motion.div 
-                    key="roles"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ display: 'flex', gap: '30px', flexWrap: 'wrap', justifyContent: 'center' }}
-                >
-                    <div 
-                        className="glass-panel"
-                        onClick={() => handleRoleSelect('client')}
-                        style={{ 
-                            padding: '40px', width: '240px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)',
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', cursor: 'pointer',
-                            background: 'rgba(255,255,255,0.02)', transition: 'all 0.3s'
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
-                    >
-                        <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <User size={24} />
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
-                            <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>CLIENT PORTAL</h3>
-                            <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', margin: 0 }}>SUBMIT & TRACK NODES</p>
-                        </div>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+            
+            {/* SECTION 1: CREDENTIALS */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-panel" style={{ padding: '40px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
+                    <div style={{ width: '50px', height: '50px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Award size={24} color="var(--color-primary)" /></div>
+                    <div>
+                        <h2 style={{ fontSize: '24px', fontWeight: 900, margin: 0, letterSpacing: '0.1em' }}>VERIFIED CREDENTIALS</h2>
+                        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '5px 0 0 0' }}>IT INFRASTRUCTURE & CYBERSECURITY</p>
                     </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '20px' }}>
+                    {BADGES.map((badge, idx) => (
+                        <div key={idx} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '16px', padding: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <img src={badge} alt="Certification Badge" style={{ width: '100%', height: 'auto', objectFit: 'contain' }} />
+                        </div>
+                    ))}
+                </div>
+            </motion.section>
 
-                    <div 
-                        className="glass-panel"
-                        onClick={() => handleRoleSelect('support_tier_1')}
-                        style={{ 
-                            padding: '40px', width: '240px', borderRadius: '24px', border: '1px solid rgba(0,122,255,0.3)',
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', cursor: 'pointer',
-                            background: 'rgba(0,122,255,0.05)', transition: 'all 0.3s',
-                            boxShadow: '0 0 30px rgba(0,122,255,0.1)'
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,122,255,0.1)'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,122,255,0.05)'}
-                    >
-                        <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px var(--color-primary)' }}>
-                            <Zap size={24} color="white" />
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
-                            <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>IT PORTAL</h3>
-                            <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', margin: 0 }}>RESOLVE & ORCHESTRATE</p>
-                        </div>
+            {/* SECTION 2: DOCUMENTATION */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-panel" style={{ padding: '40px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
+                    <div style={{ width: '50px', height: '50px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FileText size={24} color="var(--color-primary)" /></div>
+                    <div>
+                        <h2 style={{ fontSize: '24px', fontWeight: 900, margin: 0, letterSpacing: '0.1em' }}>PROFESSIONAL DOSSIER</h2>
+                        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '5px 0 0 0' }}>SYSTEMS PORTFOLIO & REPORTS</p>
                     </div>
-
-                    <div 
-                        className="glass-panel"
-                        onClick={() => handleRoleSelect('cybersecurity')}
-                        style={{ 
-                            padding: '40px', width: '240px', borderRadius: '24px', border: '1px solid rgba(255,59,48,0.3)',
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', cursor: 'pointer',
-                            background: 'rgba(255,59,48,0.05)', transition: 'all 0.3s',
-                            boxShadow: '0 0 30px rgba(255,59,48,0.1)'
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,59,48,0.1)'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,59,48,0.05)'}
-                    >
-                        <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#FF3B30', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px #FF3B30' }}>
-                            <Shield size={24} color="white" />
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
-                            <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>SECURITY PORTAL</h3>
-                            <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', margin: 0 }}>THREAT MONITORING</p>
-                        </div>
-                    </div>
-                </motion.div>
-            )}
-
-            {activeTab === 'access' && view !== 'roles' && (
-                <motion.div
-                    key="auth-form"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                    className="glass-panel"
-                    style={{ width: '400px', padding: '40px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)' }}
-                >
-                    <button onClick={() => setView('roles')} style={{ background: 'none', border: 'none', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '10px', fontWeight: 900, cursor: 'pointer', marginBottom: '30px' }}>
-                        <ArrowLeft size={14} /> SELECT DIFFERENT ROLE
-                    </button>
-
-                    <h2 style={{ fontSize: '20px', fontWeight: 900, marginBottom: '20px', textAlign: 'center' }}>
-                        {view === 'login' ? 'AUTHENTICATE IDENTITY' : 'INITIALIZE CREDENTIALS'}
-                    </h2>
-                    
-                    <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginBottom: '30px', letterSpacing: '0.1em' }}>
-                        REQUESTED CLEARANCE: <span style={{ color: 'var(--color-primary)' }}>{selectedRole.toUpperCase()}</span>
-                    </p>
-
-                    <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                        <input 
-                            type="text" 
-                            placeholder="USERNAME" 
-                            value={username}
-                            onChange={e => setUsername(e.target.value)}
-                            required
-                            style={{ width: '100%', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px', color: 'white', outline: 'none' }}
-                        />
-                        <input 
-                            type="password" 
-                            placeholder="SECURITY KEY" 
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            required
-                            style={{ width: '100%', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px', color: 'white', outline: 'none' }}
-                        />
-                        
-                        {view === 'register' && (
-                            <>
-                                <select 
-                                    value={department}
-                                    onChange={e => setDepartment(e.target.value as Department)}
-                                    style={{ width: '100%', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px', color: 'white', outline: 'none', appearance: 'none' }}
-                                >
-                                    <option value="IT">IT Department</option>
-                                    <option value="Security">Security</option>
-                                    <option value="Infrastructure">Infrastructure</option>
-                                    <option value="HR">HR</option>
-                                </select>
-                                <input 
-                                    type="text" 
-                                    placeholder="TEAM ID TO JOIN (OR LEAVE BLANK)" 
-                                    value={teamId}
-                                    onChange={e => setTeamId(e.target.value)}
-                                    style={{ width: '100%', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px', color: 'white', outline: 'none' }}
-                                />
-                                <div style={{ textAlign: 'center', margin: '10px 0', fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>OR CREATE NEW TEAM</div>
-                                <input 
-                                    type="text" 
-                                    placeholder="NEW TEAM NAME" 
-                                    value={teamName}
-                                    onChange={e => setTeamName(e.target.value)}
-                                    style={{ width: '100%', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px', color: 'white', outline: 'none' }}
-                                />
-                            </>
-                        )}
-
-                        {error && <p style={{ color: '#FF3B30', fontSize: '12px', textAlign: 'center', margin: '5px 0' }}>{error}</p>}
-                        
-                        <button type="submit" className="primary-action-btn" style={{ padding: '15px', marginTop: '10px', fontSize: '12px', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-                            {view === 'login' ? 'INITIATE UPLINK' : 'REGISTER PROFILE'} <ArrowRight size={16} />
-                        </button>
-                    </form>
-
-                    <button 
-                        onClick={() => { setView(view === 'login' ? 'register' : 'login'); setError(''); }}
-                        style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', marginTop: '20px', width: '100%', fontSize: '10px', cursor: 'pointer', letterSpacing: '0.1em' }}
-                    >
-                        {view === 'login' ? 'CREATE NEW IDENTITY' : 'RETURN TO LOGIN'}
-                    </button>
-                </motion.div>
-            )}
-
-            {activeTab === 'docs' && (
-                <motion.div 
-                    key="docs"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ display: 'flex', gap: '30px', flexWrap: 'wrap', justifyContent: 'center' }}
-                >
-                    <a 
-                        href="/assets/dossier/PORTFOLIO-Understanding-Ticketing-Systems.pdf" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="glass-panel"
-                        style={{ 
-                            padding: '40px', width: '300px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)',
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', cursor: 'pointer',
-                            background: 'rgba(255,255,255,0.02)', transition: 'all 0.3s', textDecoration: 'none', color: 'white'
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
-                    >
-                        <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <FileText size={24} />
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
-                            <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>PORTFOLIO REPORT</h3>
-                            <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', margin: 0, lineHeight: 1.5 }}>UNDERSTANDING TICKETING SYSTEMS</p>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                    <a href="/assets/dossier/PORTFOLIO-Understanding-Ticketing-Systems.pdf" target="_blank" rel="noopener noreferrer" style={{ padding: '30px', background: 'rgba(255,255,255,0.03)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', textDecoration: 'none', color: 'white', display: 'flex', flexDirection: 'column', gap: '15px', transition: 'background 0.3s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}>
+                        <FileText size={32} />
+                        <div>
+                            <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>TICKETING SYSTEMS PORTFOLIO</h3>
+                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.5 }}>A comprehensive breakdown of enterprise ticketing architectures, workflows, and SLA management.</p>
                         </div>
                     </a>
-
-                    <a 
-                        href="/assets/dossier/CERT-BADGES.pdf" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="glass-panel"
-                        style={{ 
-                            padding: '40px', width: '300px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)',
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', cursor: 'pointer',
-                            background: 'rgba(255,255,255,0.02)', transition: 'all 0.3s', textDecoration: 'none', color: 'white'
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                        onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
-                    >
-                        <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Award size={24} />
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
+                    <a href="/assets/dossier/CERT-BADGES.pdf" target="_blank" rel="noopener noreferrer" style={{ padding: '30px', background: 'rgba(255,255,255,0.03)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', textDecoration: 'none', color: 'white', display: 'flex', flexDirection: 'column', gap: '15px', transition: 'background 0.3s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}>
+                        <Award size={32} />
+                        <div>
                             <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>CERTIFICATION INDEX</h3>
-                            <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', margin: 0, lineHeight: 1.5 }}>VERIFIED CREDENTIAL BREAKDOWN</p>
+                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.5 }}>A detailed document outlining all verified IT and Cybersecurity credentials acquired.</p>
                         </div>
                     </a>
-                </motion.div>
-            )}
+                </div>
+            </motion.section>
 
-            {activeTab === 'gallery' && (
-                <motion.div 
-                    key="gallery"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                    className="glass-panel"
-                    style={{ padding: '40px', width: '800px', maxWidth: '90vw', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}
+            {/* SECTION 3: LABS GALLERY */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-panel" style={{ padding: '40px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
+                    <div style={{ width: '50px', height: '50px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Camera size={24} color="var(--color-primary)" /></div>
+                    <div>
+                        <h2 style={{ fontSize: '24px', fontWeight: 900, margin: 0, letterSpacing: '0.1em' }}>FIELD OPERATIONS</h2>
+                        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '5px 0 0 0' }}>PER SCHOLAS HARDWARE & SYSTEMS LABS</p>
+                    </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
+                    {[1, 2, 3].map((num) => (
+                        <div key={num} style={{ aspectRatio: '16/9', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px dashed rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.3)', fontSize: '10px', letterSpacing: '0.1em', fontWeight: 900 }}>
+                            AWAITING IMAGE DATA
+                        </div>
+                    ))}
+                </div>
+            </motion.section>
+
+            {/* SECTION 4: CAPSTONE GATEWAY */}
+            <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-panel" style={{ padding: '60px 40px', borderRadius: '32px', border: '1px solid var(--color-primary)', background: 'linear-gradient(135deg, rgba(0,122,255,0.1) 0%, rgba(0,0,0,0) 100%)', textAlign: 'center' }}>
+                <MonitorPlay size={48} color="var(--color-primary)" style={{ margin: '0 auto 20px auto', filter: 'drop-shadow(0 0 20px rgba(0,122,255,0.5))' }} />
+                <h2 style={{ fontSize: '32px', fontWeight: 900, margin: '0 0 15px 0', letterSpacing: '0.2em', textShadow: '0 0 20px rgba(255,255,255,0.3)' }}>STELLAR TICKET CAPSTONE</h2>
+                <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)', maxWidth: '600px', margin: '0 auto 40px auto', lineHeight: 1.6 }}>
+                    A full-stack, multi-tenant IT Support and Cybersecurity ticketing platform. Featuring persistent data, role-based access control, an SLA engine, and a live Knowledge Base CMS.
+                </p>
+                <button 
+                    className="primary-action-btn"
+                    onClick={() => setIsDemoLaunched(true)}
+                    style={{ padding: '20px 40px', fontSize: '16px', fontWeight: 900, letterSpacing: '0.2em', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '15px', margin: '0 auto' }}
                 >
-                    <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto' }}>
-                        <Camera size={24} />
-                    </div>
-                    <h3 style={{ fontSize: '20px', fontWeight: 900, margin: '0 0 15px 0', letterSpacing: '0.1em' }}>FIELD OPERATIONS GALLERY</h3>
-                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '0 0 30px 0', lineHeight: 1.6 }}>Photographic documentation of hands-on technical deployments and hardware operations at Per Scholas.</p>
-                    
-                    {/* Placeholder for future images */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
-                        {[1, 2, 3].map((num) => (
-                            <div key={num} style={{ aspectRatio: '16/9', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontWeight: 900, letterSpacing: '0.1em' }}>AWAITING IMAGE DATA</span>
-                            </div>
-                        ))}
-                    </div>
-                </motion.div>
-            )}
+                    LAUNCH LIVE DEMONSTRATION <ArrowRight size={20} />
+                </button>
+            </motion.section>
 
-            {activeTab === 'credentials' && (
-                <motion.div 
-                    key="credentials"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-                >
-                    <div className="glass-panel" style={{ padding: '40px', width: '500px', maxWidth: '90vw', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px', position: 'relative', overflow: 'hidden' }}>
-                        <AnimatePresence mode="wait">
-                            <motion.img 
-                                key={currentBadgeIndex}
-                                src={BADGES[currentBadgeIndex]}
-                                alt="Certification Badge"
-                                initial={{ opacity: 0, filter: 'blur(10px)', scale: 1.1 }}
-                                animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
-                                exit={{ opacity: 0, filter: 'blur(10px)', scale: 0.9 }}
-                                transition={{ duration: 0.6, ease: 'easeInOut' }}
-                                style={{ width: '80%', height: 'auto', objectFit: 'contain' }}
-                            />
-                        </AnimatePresence>
-                    </div>
-
-                    {/* Progress Indicator */}
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '30px' }}>
-                        {BADGES.map((_, index) => (
-                            <div 
-                                key={index} 
-                                style={{ 
-                                    width: '30px', height: '4px', borderRadius: '2px', 
-                                    background: currentBadgeIndex === index ? 'var(--color-primary)' : 'rgba(255,255,255,0.2)',
-                                    transition: 'background 0.3s'
-                                }} 
-                            />
-                        ))}
-                    </div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+        </div>
+        
+        <div style={{ textAlign: 'center', marginTop: '60px', opacity: 0.5 }}>
+            <p style={{ fontSize: '10px', letterSpacing: '0.2em', margin: 0 }}>© 2026 ANTHONY CURRIE // CAPSTONE PORTFOLIO</p>
+        </div>
     </div>
   );
 };
