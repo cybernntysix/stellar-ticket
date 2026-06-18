@@ -260,7 +260,19 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                     {PORTFOLIO_DOCS.map(doc => (
                         <button 
                             key={doc.id}
-                            onClick={() => setSelectedDoc(doc)}
+                            onClick={() => {
+                                if (window.innerWidth <= 768) {
+                                    const link = document.createElement('a');
+                                    link.href = doc.pdfUrl;
+                                    link.download = doc.pdfUrl.split('/').pop() || 'document.pdf';
+                                    link.target = '_blank';
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                } else {
+                                    setSelectedDoc(doc);
+                                }
+                            }}
                             className="glass-panel mobile-center-doc"
                             style={{ padding: '30px', background: 'rgba(255,255,255,0.03)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '15px', transition: 'background 0.3s', textAlign: 'left', color: 'white' }}
                             onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
