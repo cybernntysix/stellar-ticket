@@ -28,8 +28,8 @@ app.use(helmet());
 // 2. Strict CORS Policy (Anti-Scraping)
 app.use(cors({
     origin: function(origin, callback) {
-        // Allow Vercel, Render, Localhost, or no origin (e.g., server-to-server)
-        if (!origin || origin.includes('localhost') || origin.includes('vercel.app') || origin.includes('onrender.com')) {
+        // Allow Vercel, Render, Localhost, local network IPs, or no origin
+        if (!origin || origin.includes('localhost') || origin.includes('192.168.') || origin.includes('10.') || origin.includes('vercel.app') || origin.includes('onrender.com')) {
             callback(null, true);
         } else {
             callback(new Error('Network request blocked by strict CORS policy.'));

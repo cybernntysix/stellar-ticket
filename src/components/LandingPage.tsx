@@ -91,7 +91,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: 'center', marginBottom: '40px' }}>
                 <h1 style={{ fontSize: '32px', fontWeight: 900, letterSpacing: '0.3em', margin: '0 0 10px 0', textShadow: '0 0 30px rgba(255,255,255,0.3)' }}>STELLAR TICKET</h1>
-                <p style={{ color: 'var(--color-primary)', fontSize: '10px', fontWeight: 900, letterSpacing: '0.5em', margin: 0 }}>LIVE CAPSTONE DEMONSTRATION</p>
+                <p style={{ color: 'var(--color-primary)', fontSize: '10px', fontWeight: 900, letterSpacing: '0.5em', margin: 0 }}>LIVE DEMONSTRATION</p>
             </motion.div>
 
             <AnimatePresence mode="wait">
@@ -256,12 +256,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                         <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '5px 0 0 0' }}>SYSTEMS PORTFOLIOS & REPORTS</p>
                     </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                <div className="mobile-grid-fix" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
                     {PORTFOLIO_DOCS.map(doc => (
                         <button 
                             key={doc.id}
                             onClick={() => setSelectedDoc(doc)}
-                            className="glass-panel"
+                            className="glass-panel mobile-center-doc"
                             style={{ padding: '30px', background: 'rgba(255,255,255,0.03)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '15px', transition: 'background 0.3s', textAlign: 'left', color: 'white' }}
                             onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
                         >
@@ -284,7 +284,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                         <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '5px 0 0 0' }}>PER SCHOLAS HARDWARE & SYSTEMS LABS</p>
                     </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+                <div className="mobile-horizontal-gallery" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
                     {[
                       '/assets/dossier/landing-page-images/IMG_20260420_154106228.jpg',
                       '/assets/dossier/landing-page-images/IMG_20260420_155404710.jpg',
@@ -310,12 +310,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                         style={{ width: '100%', display: 'block' }} 
                     />
                 </div>
-                <h2 style={{ fontSize: '32px', fontWeight: 900, margin: '0 0 15px 0', letterSpacing: '0.2em', textShadow: '0 0 20px rgba(255,255,255,0.3)' }}>STELLAR TICKET CAPSTONE</h2>
+                <h2 style={{ fontSize: '32px', fontWeight: 900, margin: '0 0 15px 0', letterSpacing: '0.2em', textShadow: '0 0 20px rgba(255,255,255,0.3)' }}>STELLAR TICKET</h2>
                 <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)', maxWidth: '600px', margin: '0 auto 40px auto', lineHeight: 1.6 }}>
                     A full-stack, multi-tenant IT Support and Cybersecurity ticketing platform. Featuring persistent data, role-based access control, an SLA engine, and a live Knowledge Base CMS.
                 </p>
                 <button 
-                    className="primary-action-btn"
+                    className="primary-action-btn mobile-btn-fix"
                     onClick={() => setIsDemoLaunched(true)}
                     style={{ padding: '20px 40px', fontSize: '16px', fontWeight: 900, letterSpacing: '0.2em', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '15px', margin: '0 auto' }}
                 >
@@ -325,8 +325,65 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
 
         </div>
         
+        {/* DOCUMENT VIEWER MODAL */}
+        <AnimatePresence>
+            {selectedDoc && (
+                <div style={{ position: 'fixed', inset: 0, zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(20px)' }}>
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="glass-panel"
+                        style={{ width: '90vw', height: '90vh', maxWidth: '1200px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+                    >
+                        <div style={{ padding: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <FileText size={16} color="var(--color-primary)" />
+                                <span style={{ fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em' }}>DOCUMENT VIEWER</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '15px' }}>
+                                <a href={selectedDoc.pdfUrl} download className="sidebar-btn" style={{ textDecoration: 'none', margin: 0, padding: '8px 16px', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    DOWNLOAD PDF
+                                </a>
+                                <button onClick={() => setSelectedDoc(null)} className="sidebar-btn" style={{ margin: 0, padding: '8px 16px', fontSize: '10px', color: '#FF3B30', borderColor: 'rgba(255,59,48,0.3)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    CLOSE VIEWER
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div style={{ flexGrow: 1, overflowY: 'auto', padding: '40px', background: 'rgba(0,0,0,0.5)' }}>
+                            {selectedDoc.content && selectedDoc.content.length > 0 ? (
+                                <div style={{ maxWidth: '800px', margin: '0 auto', color: 'rgba(255,255,255,0.8)', lineHeight: 1.8, fontSize: '14px' }}>
+                                    <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'white', letterSpacing: '0.1em', marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>{selectedDoc.title}</h3>
+                                    
+                                    {selectedDoc.content.map((section, idx) => (
+                                        <div key={idx} style={{ marginBottom: '40px' }}>
+                                            {section.sectionHeading && <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'white', letterSpacing: '0.1em', marginTop: '50px', marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>{section.sectionHeading}</h3>}
+                                            {section.title && <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '15px' }}>{section.title}</h4>}
+                                            {section.paragraphs.map((p, pIdx) => (
+                                                <p key={pIdx} style={{ marginBottom: '20px' }}>{p}</p>
+                                            ))}
+                                            {section.images && section.images.length > 0 && (
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
+                                                    {section.images.map((img, imgIdx) => (
+                                                        <img key={imgIdx} src={img} alt={`Figure ${imgIdx + 1}`} style={{ width: '100%', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }} />
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <iframe src={selectedDoc.pdfUrl} width="100%" height="100%" style={{ border: 'none', background: 'white', borderRadius: '12px' }} />
+                            )}
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+        </AnimatePresence>
+
         <div style={{ textAlign: 'center', marginTop: '60px', opacity: 0.5 }}>
-            <p style={{ fontSize: '10px', letterSpacing: '0.2em', margin: 0 }}>© 2026 ANTHONY CURRIE // CAPSTONE PORTFOLIO</p>
+            <p style={{ fontSize: '10px', letterSpacing: '0.2em', margin: 0 }}>© 2026 ANTHONY CURRIE // PORTFOLIO</p>
         </div>
     </div>
   );

@@ -1,0 +1,64 @@
+4.  Next, I installed the RAM. The system had 2 RAM modules, so I lined them up with the notches in the 
+the CPU fan header on the motherboard.  
+but I would have added some if we did. Also I  mounted the cooler and connected the cooler cable to 
+3.  After that, I worked on the CPU cooler. I cleaned the contact area, and we didn’t have thermal paste 
+anything.  
+it into place. I avoided touching the pins or conductive areas to make sure I didn’t damage 
+2.  I installed the CPU onto the motherboard and made sure it was lined up correctly before locking 
+I also followed anti-static precautions because I was handling internal computer components.  
+1.  I started by setting up the workspace and making sure the parts, screws, and tools were available. 
+Work Performed  
+ 
+camera for documentation + Desktop computer parts and screws  
+PC repair toolkit + Anti-static protection + Monitor + Keyboard + Mouse + Power cable + Smartphone 
+Tools and Materials Used  
+system returned to a working state after assembly.  
+The goal of this project was to assemble a desktop computer from disassembled parts and make sure the 
+Objective  
+cables, monitor, keyboard, mouse, and power cable  
+Main parts handled: motherboard, CPU, CPU cooler, RAM, storage drive, power supply, internal 
+Small form factor desktop  
+Desktop computer  
+System / Device  
+including the motherboard, CPU, CPU cooler, RAM, storage, power supply, and internal cables.  
+together. This was a hands-on hardware lab where I worked with the main internal parts of a desktop, 
+For this project, I assembled a desktop computer and verified that it worked after putting the parts back 
+Project Summary  
+Hands-on IT hardware lab / desktop support project  
+Project Type  
+Desktop Computer Assembly and Verification  
+Project Title  
+Assembly and Verification  
+Project Documentation: Desktop Computer 
+----------------Page (0) Break----------------
+ 
+header. Verified the RAM was fully seated and locked into place.  
+❖ Made sure the CPU cooler was mounted firmly and connected to the CPU fan 
+ 
+CPU cooler installation, and basic post-assembly verification.  
+me get more comfortable with desktop hardware, motherboard layout, internal cabling, RAM installation, 
+The desktop computer was assembled and checked after the hardware was installed. This project helped 
+Result  
+●  Verified the computer powered on after assembly.  
+●  Reviewed cable connections before powering on the system.  
+●  Checked motherboard alignment before tightening screws.  
+RAM was fully seated in place. 
+●  Made sure the CPU cooler was mounted securely and connected the CPU fan header. Verified the 
+●  Checked that the CPU was installed in the correct orientation.  
+Troubleshooting / Quality Checks  
++ ESD-safe handling + Hardware verification + Technical documentation  
++ Power supply connection + Storage installation + Internal cable connection + Front-panel connector setup 
+Desktop assembly + CPU installation + CPU cooler installation + RAM installation + Motherboard installation 
+Skills Practiced  
+Then I powered on the computer to verify that the system worked after being assembled.  
+8.  After everything was connected, I plugged in the monitor, keyboard, mouse, and power cable. 
+and the cables were not blocking anything important.  
+checked the inside of the case before powering it on to make sure the hardware was seated correctly 
+7.  I installed and connected the storage device, then connected the needed power and data cables. I 
+audio connections.  
+6.  I also worked on the front-panel connections, including the power button, LED indicators, USB, and 
+case. I lined it up with the case openings and screw holes, then secured it with the correct screws.  
+5.  Once the main parts were installed on the motherboard, I placed the motherboard into the desktop 
+in the appropriate slots to enable Dual Channel mode in the BIOS. 
+slots and pressed them down until they were fully seated and locked in place. I made sure they were 
+----------------Page (1) Break----------------
