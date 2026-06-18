@@ -237,41 +237,73 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                 </div>
             </motion.section>
 
-            {/* SECTION 2: DOCUMENTATION (Modal Hub) */}
+            {/* SECTION 2: DOCUMENTATION */}
             <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="glass-panel" style={{ padding: '40px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px' }}>
-                    <div style={{ width: '50px', height: '50px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FileText size={24} color="var(--color-primary)" /></div>
-                    <div>
-                        <h2 style={{ fontSize: '24px', fontWeight: 900, margin: 0, letterSpacing: '0.1em' }}>DOCUMENTATION</h2>
-                        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '5px 0 0 0' }}>SYSTEMS PORTFOLIOS & REPORTS</p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px', flexWrap: 'wrap', gap: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                        <div style={{ width: '50px', height: '50px', borderRadius: '12px', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FileText size={24} color="var(--color-primary)" /></div>
+                        <div>
+                            <h2 style={{ fontSize: '24px', fontWeight: 900, margin: 0, letterSpacing: '0.1em' }}>PROFESSIONAL DOSSIER</h2>
+                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '5px 0 0 0' }}>SYSTEMS PORTFOLIO & REPORTS</p>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '15px' }}>
+                        <a href="/assets/dossier/PORTFOLIO-Understanding-Ticketing-Systems.pdf" target="_blank" rel="noopener noreferrer" className="sidebar-btn" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '10px', padding: '10px 20px', margin: 0, color: 'var(--color-primary)', borderColor: 'var(--color-primary)' }}>
+                            <FileText size={14} /> OPEN FULL SCREEN PDF
+                        </a>
                     </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-                    <button 
-                        onClick={() => setSelectedPdf('/assets/dossier/PORTFOLIO-Understanding-Ticketing-Systems.pdf')}
-                        className="glass-panel"
-                        style={{ padding: '30px', background: 'rgba(255,255,255,0.03)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '15px', transition: 'background 0.3s', textAlign: 'left', color: 'white' }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
-                    >
-                        <FileText size={32} />
-                        <div>
-                            <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>TICKETING SYSTEMS PORTFOLIO</h3>
-                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.5 }}>A comprehensive breakdown of enterprise ticketing architectures, workflows, and SLA management.</p>
-                        </div>
-                    </button>
-                    
-                    <button 
-                        onClick={() => setSelectedPdf('/assets/dossier/CERT-BADGES.pdf')}
-                        className="glass-panel"
-                        style={{ padding: '30px', background: 'rgba(255,255,255,0.03)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '15px', transition: 'background 0.3s', textAlign: 'left', color: 'white' }}
-                        onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
-                    >
-                        <Award size={32} />
-                        <div>
-                            <h3 style={{ fontSize: '16px', fontWeight: 900, margin: '0 0 5px 0', letterSpacing: '0.1em' }}>CERTIFICATION INDEX</h3>
-                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.5 }}>A detailed document outlining all verified IT and Cybersecurity credentials acquired.</p>
-                        </div>
-                    </button>
+                
+                <div style={{ width: '100%', height: '600px', borderRadius: '16px', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.5)', padding: '40px', boxSizing: 'border-box' }}>
+                    <div style={{ maxWidth: '800px', margin: '0 auto', color: 'rgba(255,255,255,0.8)', lineHeight: 1.8, fontSize: '14px' }}>
+                        <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'white', letterSpacing: '0.1em', marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>Understanding Ticketing Systems</h3>
+                        
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>What information should a user provide when creating a ticket?</h4>
+                        <p style={{ marginBottom: '20px' }}>When a user creates a ticket they should describe the experience of the client and their problem needing to be resolved. The documentation should include the client's name, details of the issue, whatever is needed to access the machine, and a clear description of what information was gathered during their conversation. They should also document whatever decisions were made to try and fix the issue if there were any steps taken.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>Why is it important to categorize tickets?</h4>
+                        <p style={{ marginBottom: '20px' }}>It's important to categorize tickets because we need to resolve tickets in the order of impact or reach and to imply the escalation level if it has not already been assigned/claimed by that Support team. It gives clarity on which tickets to prioritize other than the SLA timing. Also it is important for organizational purposes because there can be a lot of tickets coming in sometimes depending on the state of the organization. So it's good to have categorization to keep a birds eye view on what sort of tickets are coming in and it can reveal a larger, more connected issue than just there being a lot of individual tickets coming in. This gives you the ability to get to the core of an issue that resolves multiple tickets at once saving companies a lot of time.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>What happens after a ticket is submitted?</h4>
+                        <p style={{ marginBottom: '20px' }}>After a ticket is submitted by a client, the IT Support team will get them into a queue where we read the tickets and decide whether we will claim that ticket, assign it to a team member, or escalate the ticket to Level 2 Support. Once we do receive the ticket we speak with the client to gather clarifying information about the problem and determine as much as we can so we can resolve and close the ticket or escalate it to the proper team that can handle it. If we escalate the ticket after gathering information, we document and communicate the task to the team we assigned the ticket to and keep the ticket open.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>What happens when a ticket is resolved?</h4>
+                        <p style={{ marginBottom: '20px' }}>When tickets are resolved we make sure that all of the steps from information gathering, theorizing, troubleshooting theories, and testing solutions are all documented properly. Once the ticket is resolved, closed, and everything is working properly make sure to always send a professional statement of the resolution to the client.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>Why should ticket history be preserved?</h4>
+                        <p style={{ marginBottom: '20px' }}>Tickets having so much useful documentation is crucial when it comes to ticket history because there are going to be repeated issues that can be referenced from past tickets. This data is vital for efficiency and effective use of our previous efforts to make sure that we work smart and keep ourselves and other teams fresh for truly unique problems and issues. Over time this could turn into a full Knowledge Base of guidance that clients could use without even needing our help and it can provide team members the ability to work more autonomously, empowering even new team members.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>What are internal notes used for?</h4>
+                        <p style={{ marginBottom: '20px' }}>When tickets have internal notes, these can give us the ability to communicate faster than emails to other team members throughout tickets' lifespan, while keeping all of the communication attached and in one place, easy to see. It is clean, saves time navigating, and can help with nuance for tickets of the similar variety.</p>
+
+                        <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'white', letterSpacing: '0.1em', marginTop: '50px', marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>User Roles</h3>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>What should an IT Support technician be able to do?</h4>
+                        <p style={{ marginBottom: '20px' }}>IT Support should be able to claim, assign, create, and escalate tickets. They should also be able to create Knowledge Base insights, they should be able to reply to tickets and communicate with clients and the Level 2 Support teams. IT Support is responsible for gathering the information, for resolving tickets within their role's scope and to make sure that pristine details and communication towards the resolution is handled in an orderly manner.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>Why might a Cybersecurity Analyst need access to ticket information?</h4>
+                        <p style={{ marginBottom: '20px' }}>A Cybersecurity team member would use the ticket information for them to interpret a solution based on the problem's details and the communication between IT Support and the client.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>Why is role-based access important?</h4>
+                        <p style={{ marginBottom: '20px' }}>Practicing the principle of Least Privilege allows scope and responsibility to remain clear, making sure there is no confusion or ability to go outside of the necessary chain of custody. Also it can further prevent human error and vulnerabilities inside of an organization.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>What metrics would help a manager monitor support performance?</h4>
+                        <p style={{ marginBottom: '20px' }}>The metrics managers use need to measure how efficiently the IT team is working to resolve tickets. The main metrics they'd be monitoring are the number of open tickets, average response time, average resolution time, first-contact resolution rate, backlog size, SLA compliance, technician workload, ticket reopen rate, and customer satisfaction. These metrics help identify bottlenecks, balance workloads, improve service quality, and ensure users receive timely support.</p>
+
+                        <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'white', letterSpacing: '0.1em', marginTop: '50px', marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>Project Overview</h3>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>What problem were you trying to solve when you decided to build Stellar Ticket?</h4>
+                        <p style={{ marginBottom: '20px' }}>The intention of Stellar Ticket was to build every piece of the ticketing system as a way to design the elements, the procedures, and the operations of an enterprise IT Support environment. With AI, this has been a new way to get an understanding of the systems, concepts, and procedures that make ticketing systems effective. I wanted to create a ticketing system that resembled its impact and allow me to see from the perspective of Level 2 Support and the cybersecurity perspective.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>Who would use this system in a real company?</h4>
+                        <p style={{ marginBottom: '20px' }}>In a real company, the IT Support and Cybersecurity professionals could use Stellar Ticket as a way to bring life to a lot of the redundant tasks of ticketing systems. I would hope to gamify and make the work more engaging while maintaining efficiency and even optimizing some of the functionality of the software in comparison to a lot of the ticketing systems I see that are still widely used today.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>Why would someone use Stellar Ticket instead of email?</h4>
+                        <p style={{ marginBottom: '20px' }}>Stellar Ticket allows for seamless visualization of IT Support operations, role-based access, ticket lifecycle management, event logging, dashboards, knowledge base integration, and department workflows. Also the actual GUI for user experience is important for Stellar Ticket, modular parts to keep users engaged.</p>
+
+                        <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '10px' }}>What makes Stellar Ticket different from a basic ticketing system?</h4>
+                        <p style={{ marginBottom: '20px' }}>It is designed to fit the user based on their preferences or the agreement of their own teams. It continuously iterates features and offers deeper customization to users who desire that. Each teams' version of the application can look different depending on their needs and objectives.</p>
+                    </div>
                 </div>
             </motion.section>
 
