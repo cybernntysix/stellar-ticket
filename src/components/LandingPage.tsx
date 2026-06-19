@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, User, Zap, ArrowLeft, ArrowRight, Lock, FileText, Award, Camera, MonitorPlay, HardDrive } from 'lucide-react';
+import { Shield, User, Zap, ArrowLeft, ArrowRight, Lock, FileText, Award, Camera, MonitorPlay, HardDrive, Linkedin } from 'lucide-react';
 import { useTickets, type Role, type Department } from '../context/TicketContext';
 import { PORTFOLIO_DOCS, type PortfolioDocument } from '../data/portfolioData';
 
@@ -220,13 +220,25 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
             <h1 style={{ fontSize: 'clamp(40px, 6vw, 72px)', fontWeight: 900, letterSpacing: '0.1em', margin: '0 0 10px 0', textShadow: '0 0 40px rgba(255,255,255,0.4)' }}>ANTHONY CURRIE</h1>
             <p style={{ color: 'var(--color-primary)', fontSize: 'clamp(12px, 2vw, 18px)', fontWeight: 900, letterSpacing: '0.4em', margin: '0 0 30px 0', textShadow: '0 0 20px var(--color-primary)' }}>IT SUPPORT SPECIALIST</p>
             
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap', marginBottom: '30px' }}>
                 {['HARDWARE DIAGNOSTICS', 'INCIDENT RESPONSE', 'CLOUD ARCHITECTURE', 'SYSTEMS ADMINISTRATION'].map(skill => (
                     <span key={skill} style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.7)' }}>
                         [ {skill} ]
                     </span>
                 ))}
             </div>
+
+            <a 
+                href="https://linkedin.com/in/anthonyccurrie" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '12px 24px', background: 'rgba(0,122,255,0.1)', border: '1px solid var(--color-primary)', borderRadius: '24px', color: 'white', textDecoration: 'none', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em', transition: 'all 0.3s', boxShadow: '0 0 20px rgba(0,122,255,0.1)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,122,255,0.2)'; e.currentTarget.style.boxShadow = '0 0 30px rgba(0,122,255,0.3)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,122,255,0.1)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(0,122,255,0.1)'; }}
+            >
+                <Linkedin size={18} color="var(--color-primary)" />
+                CONNECT ON LINKEDIN
+            </a>
         </motion.div>
 
         <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '40px' }}>
@@ -413,7 +425,16 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
             document.body
         )}
 
-        <div style={{ textAlign: 'center', marginTop: '60px', opacity: 0.5 }}>
+        <div style={{ textAlign: 'center', marginTop: '60px', opacity: 0.5, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
+            <a 
+                href="https://linkedin.com/in/anthonyccurrie" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{ color: 'white', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em' }}
+            >
+                <Linkedin size={16} color="var(--color-primary)" />
+                LINKEDIN
+            </a>
             <p style={{ fontSize: '10px', letterSpacing: '0.2em', margin: 0 }}>© 2026 ANTHONY CURRIE // PORTFOLIO</p>
         </div>
     </div>
