@@ -28,10 +28,38 @@ const BADGES = [
   '/assets/dossier/badges/creating-compelling-reports.png'
 ];
 
+const SKILL_DATA: Record<string, string[]> = {
+  'HARDWARE DIAGNOSTICS': [
+    "Provide technical support for desktops, laptops, and mobile devices, troubleshooting hardware and software issues.",
+    "Perform hardware repairs and upgrades such as RAM, hard drives, and peripheral devices.",
+    "Resolved 2,500+ technical incidents across macOS, Windows, and audio hardware, maintaining a strong track record of first-contact resolution.",
+    "Diagnosed and resolved complex issues involving system performance, driver conflicts, OS errors, and software compatibility."
+  ],
+  'INCIDENT RESPONSE': [
+    "Owned the full troubleshooting lifecycle, including issue diagnosis, resolution, and documentation, ensuring consistent and repeatable support processes.",
+    "Supported high-demand clients in time-sensitive environments, maintaining system reliability and minimizing downtime during critical operations.",
+    "Delivered 40+ hours/week of remote technical support via phone, email, Zoom, and messaging platforms.",
+    "Managed flexible, on-call support across off-hours and overnight sessions, demonstrating reliability in fast-paced and unstructured environments."
+  ],
+  'CLOUD ARCHITECTURE': [
+    "Entra ID configuration and environment deployment in homelab environments.",
+    "Diagnose and resolve network connectivity issues (Wi-Fi, LAN, VPN) to minimize downtime.",
+    "Experience with Office 365, Google Workspace, Azure, and ServiceNow platforms.",
+    "Network traffic analysis via Wireshark and SIEM fundamentals."
+  ],
+  'SYSTEMS ADMINISTRATION': [
+    "Install, configure, and maintain operating systems including Windows, macOS, and basic Linux environments.",
+    "Configured macOS systems end-to-end, including software installation, OS updates, performance tuning, and workflow optimization.",
+    "Improved system stability and reduced CPU-related disruptions by optimizing resource usage, plugin management, and system configurations.",
+    "Python automation scripting, Linux file management, and security configuration."
+  ]
+};
+
 const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
   const { login, register } = useTickets();
   const [isDemoLaunched, setIsDemoLaunched] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<PortfolioDocument | null>(null);
+  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
   const [view, setView] = useState<'roles' | 'login' | 'register'>('roles');
   const [selectedRole, setSelectedRole] = useState<Role>('client');
   
@@ -226,25 +254,94 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
             <h1 style={{ fontSize: 'clamp(40px, 6vw, 72px)', fontWeight: 900, letterSpacing: '0.1em', margin: '0 0 10px 0', textShadow: '0 0 40px rgba(255,255,255,0.4)' }}>ANTHONY CURRIE</h1>
             <p style={{ color: 'var(--color-primary)', fontSize: 'clamp(12px, 2vw, 18px)', fontWeight: 900, letterSpacing: '0.4em', margin: '0 0 30px 0', textShadow: '0 0 20px var(--color-primary)' }}>IT SUPPORT SPECIALIST</p>
             
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap', marginBottom: '30px' }}>
-                {['HARDWARE DIAGNOSTICS', 'INCIDENT RESPONSE', 'CLOUD ARCHITECTURE', 'SYSTEMS ADMINISTRATION'].map(skill => (
-                    <span key={skill} style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.7)' }}>
+            <div className="skill-buttons-container" style={{ display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap', marginBottom: '30px' }}>
+                {Object.keys(SKILL_DATA).map(skill => (
+                    <button 
+                        key={skill} 
+                        onClick={() => setSelectedSkill(skill)}
+                        style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', transition: 'all 0.3s' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'; e.currentTarget.style.borderColor = 'var(--color-primary)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                    >
                         [ {skill} ]
-                    </span>
+                    </button>
                 ))}
             </div>
 
-            <a 
-                href="https://linkedin.com/in/anthonyccurrie" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', color: 'white', textDecoration: 'none', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em', transition: 'all 0.3s', textShadow: '0 0 10px rgba(0,122,255,0.5)' }}
-                onMouseEnter={e => { e.currentTarget.style.color = 'var(--color-primary)'; e.currentTarget.style.textShadow = '0 0 20px var(--color-primary)'; }}
-                onMouseLeave={e => { e.currentTarget.style.color = 'white'; e.currentTarget.style.textShadow = '0 0 10px rgba(0,122,255,0.5)'; }}
-            >
-                <LinkedinIcon size={18} color="var(--color-primary)" />
-                CONNECT ON LINKEDIN
-            </a>
+            <div style={{ position: 'relative', width: '100%', height: 0, zIndex: 100, display: 'flex', justifyContent: 'center' }}>
+                <AnimatePresence>
+                    {selectedSkill && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                            className="skill-popup-overlay"
+                            style={{ top: 0, marginTop: 0 }}
+                        >
+                            <div className="skill-popup-content" style={{ textAlign: 'left', backgroundColor: 'rgba(0, 0, 0, 0.95)', backdropFilter: 'blur(20px)', border: 'none', boxShadow: 'none', borderRadius: '36px', overflow: 'hidden' }}>
+                            <div style={{ padding: '20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <Award size={16} color="var(--color-primary)" />
+                                    <span style={{ fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em' }}>{selectedSkill}</span>
+                                </div>
+                                <button onClick={() => setSelectedSkill(null)} style={{ background: 'none', border: 'none', margin: 0, fontSize: '10px', color: '#FF3B30', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 900, letterSpacing: '0.1em' }}>
+                                    CLOSE
+                                </button>
+                            </div>
+                            
+                            <div style={{ padding: '30px' }}>
+                                <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                    {SKILL_DATA[selectedSkill].map((bullet, idx) => (
+                                        <li key={idx} style={{ display: 'flex', gap: '15px', alignItems: 'flex-start', fontSize: '14px', lineHeight: 1.6, color: 'rgba(255,255,255,0.8)' }}>
+                                            <span style={{ color: 'var(--color-primary)', fontSize: '18px', marginTop: '-2px' }}>•</span>
+                                            {bullet}
+                                        </li>
+                                    ))}
+                                </ul>
+                                
+                                <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center' }}>
+                                    <a 
+                                            href="/assets/resume/Currie, Anthony - Resume  (2).pdf" 
+                                            download="Currie_Anthony_Resume.pdf"
+                                            style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', color: 'var(--color-primary)', textDecoration: 'none', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em', transition: 'all 0.3s', cursor: 'pointer' }}
+                                            onMouseEnter={e => { e.currentTarget.style.textShadow = '0 0 15px var(--color-primary)'; }}
+                                            onMouseLeave={e => { e.currentTarget.style.textShadow = 'none'; }}
+                                        >
+                                            <FileText size={16} color="var(--color-primary)" />
+                                            DOWNLOAD RESUME
+                                        </a>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '15px', alignItems: 'center', marginBottom: '60px' }}>
+                <a 
+                    href="https://linkedin.com/in/anthonyccurrie" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', color: 'white', textDecoration: 'none', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em', transition: 'all 0.3s', cursor: 'pointer' }}
+                    onMouseEnter={e => { e.currentTarget.style.textShadow = '0 0 15px var(--color-primary)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.textShadow = 'none'; }}
+                >
+                    <LinkedinIcon size={20} color="var(--color-primary)" />
+                    CONNECT ON LINKEDIN
+                </a>
+
+                <a 
+                    href="/assets/resume/Currie, Anthony - Resume  (2).pdf" 
+                    download="Currie_Anthony_Resume.pdf"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', color: 'white', textDecoration: 'none', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em', transition: 'all 0.3s', cursor: 'pointer' }}
+                    onMouseEnter={e => { e.currentTarget.style.textShadow = '0 0 15px var(--color-primary)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.textShadow = 'none'; }}
+                >
+                    <FileText size={20} color="var(--color-primary)" />
+                    RESUME
+                </a>
+            </div>
         </motion.div>
 
         <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '40px' }}>
