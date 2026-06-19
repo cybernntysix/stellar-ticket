@@ -103,9 +103,9 @@ const BentoGrid: React.FC<BentoGridProps> = ({ isCalibrationMode = false }) => {
       minHeight: 0 
     }}>
       
-      {/* BOX 1: NEURAL CONSTELLATION (The Forge) */}
+      {/* BOX 1: NEURAL PANEL (The Forge) */}
       <BentoBox 
-        title="NEURAL CONSTELLATION // TICKETS" 
+        title="NEURAL PANEL // TICKETS" 
         className={`bento-forge ${isCyber && hasCriticalEvent ? 'critical-breach-box' : ''}`} 
         style={{ gridColumn: forgeGridCol, gridRow: forgeGridRow, position: 'relative' }}
         isCalibrationMode={isCalibrationMode}

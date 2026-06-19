@@ -80,10 +80,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
     }
   };
 
-  const handleRoleSelect = (role: Role) => {
-    setSelectedRole(role);
-    setView('login');
-    setError('');
+  const handleRoleSelect = async (role: string) => {
+      try {
+          await login({
+              username: `demo_${role}`,
+              role: role as Role,
+              department: role === 'cybersecurity' ? 'Security' : 'IT'
+          });
+          onLogin();
+      } catch (err: any) {
+          setError(err.message);
+      }
   };
 
   const handleAuth = async (e: React.FormEvent) => {

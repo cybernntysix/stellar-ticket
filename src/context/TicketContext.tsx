@@ -3,8 +3,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 export type Role = 'client' | 'support_tier_1' | 'support_tier_2' | 'manager' | 'developer' | 'cybersecurity';
 export type Department = 'IT' | 'Security' | 'Infrastructure' | 'Research' | 'HR';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3041/api';
-
 export interface LayoutPrefs {
   showForge: boolean;
   showQueue: boolean;
@@ -111,272 +109,276 @@ interface TicketContextType {
   register: (data: any) => Promise<void>;
   logout: () => void;
   refreshData: () => Promise<void>;
-  switchRole: (role: Role) => void; // Keeping for backward compatibility temporarily
+  switchRole: (role: Role) => void;
 }
 
 const TicketContext = createContext<TicketContextType | undefined>(undefined);
 
-export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    try {
-        const savedSession = localStorage.getItem('stellar_session');
-        if (savedSession && savedSession !== 'undefined') {
-            const parsedSession = JSON.parse(savedSession);
-            
-            // SESSION TIMEOUT LOGIC (2 Hours = 7200000 ms)
-            const sessionAge = Date.now() - parsedSession.timestamp;
-            if (sessionAge > 7200000) {
-                console.warn('Session expired. Forcing re-authentication.');
-                localStorage.removeItem('stellar_session');
-                return null;
-            }
-
-            const parsed = parsedSession.user;
-            // Ensure legacy cached users get a default teamId
-            if (!parsed.teamId) parsed.teamId = 'TEAM-DEFAULT';
-            if (!parsed.layoutPrefs) parsed.layoutPrefs = { showForge: true, showQueue: true, showLogs: parsed.role !== 'client', showKB: true };
-            return parsed;
-        }
-        
-        // Backward compatibility for old 'stellar_user' key
-        const legacyUser = localStorage.getItem('stellar_user');
-        if (legacyUser && legacyUser !== 'undefined') {
-            localStorage.removeItem('stellar_user');
-            const parsed = JSON.parse(legacyUser);
-            localStorage.setItem('stellar_session', JSON.stringify({ user: parsed, timestamp: Date.now() }));
-            return parsed;
-        }
-
-        return null;
-    } catch (e) {
-        console.error('Failed to parse user from localStorage', e);
-        return null;
+// MOCK DATA FOR DEMO
+const INITIAL_TICKETS: Ticket[] = [
+    {
+        id: 'TKT-001',
+        title: 'Mainframe Database Sync Failure',
+        description: 'Cluster nodes are failing to synchronize. The replication lag is increasing exponentially.',
+        priority: 'emergency',
+        status: 'open',
+        isEscalated: true,
+        user: 'system_monitor',
+        assignedTo: 'anthonycyber',
+        department: 'Infrastructure',
+        teamId: 'DEMO',
+        createdAt: new Date(Date.now() - 3600000).toISOString(),
+        comments: [{ id: 'c1', user: 'system_monitor', text: 'Lag exceeded 5000ms. Immediate attention required.', timestamp: new Date(Date.now() - 3500000).toISOString() }],
+        tasks: [{ id: 'tsk1', description: 'Check replication logs', isComplete: false, createdAt: new Date(Date.now() - 3500000).toISOString() }]
+    },
+    {
+        id: 'TKT-002',
+        title: 'VPN Access Denied for Remote Engineering Team',
+        description: 'Multiple engineers reporting authentication failures when connecting via the Chicago proxy. RADIUS server timeouts suspected.',
+        priority: 'high',
+        status: 'open',
+        isEscalated: false,
+        user: 'j.smith',
+        department: 'IT',
+        teamId: 'DEMO',
+        createdAt: new Date(Date.now() - 86400000).toISOString(),
+        comments: [],
+        tasks: []
+    },
+    {
+        id: 'TKT-003',
+        title: 'Phishing Email Campaign Detected',
+        description: 'Multiple users received spoofed emails asking for their Office 365 credentials. Three users clicked the link.',
+        priority: 'emergency',
+        status: 'open',
+        isEscalated: true,
+        user: 'm.johnson',
+        assignedTo: 'security_team',
+        department: 'Security',
+        teamId: 'DEMO',
+        createdAt: new Date(Date.now() - 1800000).toISOString(),
+        comments: [{ id: 'c2', user: 'sec_ops', text: 'Initiated forced password reset for affected accounts.', timestamp: new Date(Date.now() - 900000).toISOString() }],
+        tasks: [{ id: 'tsk2', description: 'Block sender IP range on firewall', isComplete: true, createdAt: new Date(Date.now() - 1700000).toISOString() }]
+    },
+    {
+        id: 'TKT-004',
+        title: 'Software License Renewal for Design Team',
+        description: 'Adobe Creative Cloud licenses for the marketing and design teams are expiring in 3 days.',
+        priority: 'normal',
+        status: 'open',
+        isEscalated: false,
+        user: 'k.williams',
+        department: 'IT',
+        teamId: 'DEMO',
+        createdAt: new Date(Date.now() - 172800000).toISOString(),
+        comments: [],
+        tasks: []
+    },
+    {
+        id: 'TKT-005',
+        title: 'Network Printer Offline in Building C',
+        description: 'The main color printer on the 3rd floor of Building C is showing a paper jam error and is offline.',
+        priority: 'low',
+        status: 'closed',
+        isEscalated: false,
+        user: 'r.davis',
+        department: 'IT',
+        teamId: 'DEMO',
+        createdAt: new Date(Date.now() - 259200000).toISOString(),
+        comments: [{ id: 'c3', user: 'helpdesk', text: 'Cleared paper jam and restarted spooler service.', timestamp: new Date(Date.now() - 200000000).toISOString() }],
+        tasks: []
     }
-  });
+];
+
+const INITIAL_ACTIVITIES: Activity[] = [
+    {
+        id: 'ACT-001',
+        type: 'security_event',
+        teamId: 'DEMO',
+        user: 'system',
+        timestamp: new Date().toISOString(),
+        detail: 'Multiple failed SSH attempts detected on Gateway-Alpha.',
+        severity: 'warning',
+        vector: 'network'
+    }
+];
+
+const INITIAL_KB: KBArticle[] = [
+    {
+        id: 'KB-001',
+        title: 'Resolving Core Database Sync Latency',
+        content: 'When the replication lag exceeds 1000ms, immediately isolate the lagging node and manually force a resync using the admin CLI tools.'
+    },
+    {
+        id: 'KB-002',
+        title: 'Storage Drive Troubleshooting & Replacement',
+        content: 'When removing or replacing a storage drive (e.g., SATA SSD), always verify the computer is powered off and use anti-static precautions before handling internal components. Re-verify SATA data and power cable seating before closing the chassis.'
+    },
+    {
+        id: 'KB-003',
+        title: 'CPU/RAM Installation & Post-Assembly Verification',
+        content: 'When installing RAM modules, ensure they are lined up with the notches in the slots and pressed down until fully seated to enable Dual Channel mode. Always check motherboard alignment and fan header connections before booting.'
+    },
+    {
+        id: 'KB-004',
+        title: 'Ticketing Categorization Strategies',
+        content: 'Categorize tickets by impact and reach to establish escalation levels effectively. This gives clarity on which tickets to prioritize and can reveal a larger, more connected issue beyond individual isolated incidents.'
+    },
+    {
+        id: 'KB-005',
+        title: 'Principle of Least Privilege in Support Roles',
+        content: 'Role-based access is crucial in ticketing systems. Practicing the principle of Least Privilege ensures scope remains clear, preventing confusion, chain-of-custody violations, and ultimately mitigating human error and system vulnerabilities.'
+    }
+];
+
+export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState<User | null>(null); // Ephemeral, no localstorage
   const isAuthenticated = currentUser !== null;
 
   const [departments] = useState<Department[]>(['IT', 'Security', 'Infrastructure', 'Research', 'HR']);
-  const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [knowledgeBase, setKnowledgeBase] = useState<KBArticle[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>(INITIAL_TICKETS);
+  const [activities, setActivities] = useState<Activity[]>(INITIAL_ACTIVITIES);
+  const [knowledgeBase, setKnowledgeBase] = useState<KBArticle[]>(INITIAL_KB);
 
   const refreshData = async () => {
-    if (!currentUser) return;
-    try {
-        const [ticketsRes, activitiesRes, kbRes] = await Promise.all([
-            fetch(`${API_BASE}/tickets?teamId=${currentUser.teamId}`),
-            fetch(`${API_BASE}/activities?teamId=${currentUser.teamId}`),
-            fetch(`${API_BASE}/kb`)
-        ]);
-        const ticketsData = await ticketsRes.json();
-        const activitiesData = await activitiesRes.json();
-        const kbData = await kbRes.json();
-        
-        setTickets(ticketsData);
-        setActivities(activitiesData);
-        setKnowledgeBase(kbData);
-    } catch (err) {
-        console.error('BACKEND_FETCH_ERROR:', err);
-    }
+    // In ephemeral demo, we don't fetch from backend. State is kept in React memory.
   };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-        refreshData();
-        const interval = setInterval(refreshData, 10000);
-        return () => clearInterval(interval);
-    }
-  }, [isAuthenticated, currentUser?.teamId]);
-
   const login = async (credentials: any) => {
-      const res = await fetch(`${API_BASE}/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(credentials)
-      });
-      if (!res.ok) throw new Error('Invalid credentials');
-      const userData = await res.json();
-      const userObj = {
-          id: userData.id,
-          name: userData.username,
-          username: userData.username,
-          role: userData.role,
-          department: userData.department,
-          teamId: userData.teamId,
-          layoutPrefs: userData.layoutPrefs
+      // Bypass Backend Completely for Demo
+      const userObj: User = {
+          id: 'demo-user-1',
+          name: credentials.username || 'Demo User',
+          username: credentials.username || 'demo_user',
+          role: credentials.role || 'support_tier_1',
+          department: credentials.department || 'IT',
+          teamId: 'DEMO',
+          layoutPrefs: { showForge: true, showQueue: true, showLogs: true, showKB: true }
       };
       setCurrentUser(userObj);
-      localStorage.setItem('stellar_session', JSON.stringify({ user: userObj, timestamp: Date.now() }));
   };
 
   const register = async (data: any) => {
-      const res = await fetch(`${API_BASE}/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-      });
-      if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || 'Registration failed');
-      }
-      const userData = await res.json();
-      const userObj = {
-          id: userData.id,
-          name: userData.username,
-          username: userData.username,
-          role: userData.role,
-          department: userData.department,
-          teamId: userData.teamId,
-          layoutPrefs: userData.layoutPrefs
-      };
-      setCurrentUser(userObj);
-      localStorage.setItem('stellar_session', JSON.stringify({ user: userObj, timestamp: Date.now() }));
+      await login(data);
   };
 
   const logout = () => {
       setCurrentUser(null);
-      setTickets([]);
-      setActivities([]);
-      localStorage.removeItem('stellar_session');
-      localStorage.removeItem('stellar_user'); // Clean up legacy
+      // Reset state to initial mock data
+      setTickets(INITIAL_TICKETS);
+      setActivities(INITIAL_ACTIVITIES);
   };
 
   const updateLayoutPrefs = async (prefs: Partial<LayoutPrefs>) => {
     if (!currentUser) return;
-    try {
-        const res = await fetch(`${API_BASE}/users/${currentUser.id}/layout`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ layoutPrefs: prefs })
-        });
-        if (res.ok) {
-            const updatedUser = await res.json();
-            const userObj = {
-                ...currentUser,
-                layoutPrefs: updatedUser.layoutPrefs
-            };
-            setCurrentUser(userObj);
-            localStorage.setItem('stellar_session', JSON.stringify({ user: userObj, timestamp: Date.now() }));
-        }
-    } catch (err) { console.error(err); }
+    setCurrentUser({ ...currentUser, layoutPrefs: { ...currentUser.layoutPrefs, ...prefs } as LayoutPrefs });
   };
 
   const addTicket = async (ticketData: Omit<Ticket, 'id' | 'createdAt' | 'comments' | 'isEscalated' | 'teamId'>) => {
     if (!currentUser) return;
-    try {
-        await fetch(`${API_BASE}/tickets`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...ticketData, teamId: currentUser.teamId })
-        });
-        await refreshData();
-    } catch (err) { console.error(err); }
+    const newTicket: Ticket = {
+        ...ticketData,
+        id: `TKT-${Math.floor(Math.random() * 10000)}`,
+        teamId: currentUser.teamId,
+        createdAt: new Date().toISOString(),
+        comments: [],
+        tasks: []
+    };
+    setTickets(prev => [newTicket, ...prev]);
+    addActivity({
+        type: 'ticket_created',
+        ticketId: newTicket.id,
+        ticketTitle: newTicket.title,
+        detail: `Ticket created by ${currentUser.name}`,
+        severity: 'info'
+    });
   };
 
   const updateTicketStatus = async (id: string, status: 'open' | 'closed') => {
     if (!currentUser) return;
-    try {
-        await fetch(`${API_BASE}/tickets/${id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status, modifier: currentUser.name })
-        });
-        await refreshData();
-    } catch (err) { console.error(err); }
+    setTickets(prev => prev.map(t => t.id === id ? { ...t, status } : t));
+    addActivity({
+        type: 'status_change',
+        ticketId: id,
+        detail: `Status changed to ${status}`,
+        severity: status === 'closed' ? 'info' : 'warning'
+    });
   };
 
   const toggleEscalation = async (id: string) => {
     if (!currentUser) return;
-    const ticket = tickets.find(t => t.id === id);
-    if (!ticket) return;
-    try {
-        await fetch(`${API_BASE}/tickets/${id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ isEscalated: !ticket.isEscalated, modifier: currentUser.name })
-        });
-        await refreshData();
-    } catch (err) { console.error(err); }
+    setTickets(prev => prev.map(t => t.id === id ? { ...t, isEscalated: !t.isEscalated } : t));
   };
 
   const assignTicket = async (id: string, assignee: string | null) => {
     if (!currentUser) return;
-    try {
-        await fetch(`${API_BASE}/tickets/${id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ assignedTo: assignee, modifier: currentUser.name })
-        });
-        await refreshData();
-    } catch (err) { console.error(err); }
+    setTickets(prev => prev.map(t => t.id === id ? { ...t, assignedTo: assignee } : t));
   };
 
   const addComment = async (ticketId: string, commentData: Omit<Comment, 'id' | 'timestamp'>) => {
     if (!currentUser) return;
-    try {
-        await fetch(`${API_BASE}/tickets/${ticketId}/comments`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(commentData)
-        });
-        await refreshData();
-    } catch (err) { console.error(err); }
+    const newComment: Comment = {
+        ...commentData,
+        id: `C-${Math.floor(Math.random() * 10000)}`,
+        timestamp: new Date().toISOString()
+    };
+    setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, comments: [...t.comments, newComment] } : t));
   };
 
   const addTask = async (ticketId: string, description: string) => {
     if (!currentUser) return;
-    try {
-        await fetch(`${API_BASE}/tickets/${ticketId}/tasks`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ description })
-        });
-        await refreshData();
-    } catch (err) { console.error(err); }
+    const newTask: Task = {
+        id: `TSK-${Math.floor(Math.random() * 10000)}`,
+        description,
+        isComplete: false,
+        createdAt: new Date().toISOString()
+    };
+    setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, tasks: [...(t.tasks || []), newTask] } : t));
   };
 
   const toggleTaskCompletion = async (ticketId: string, taskId: string) => {
     if (!currentUser) return;
-    try {
-        await fetch(`${API_BASE}/tickets/${ticketId}/tasks/${taskId}/toggle`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ modifier: currentUser.name })
-        });
-        await refreshData();
-    } catch (err) { console.error(err); }
+    setTickets(prev => prev.map(t => {
+        if (t.id === ticketId && t.tasks) {
+            return {
+                ...t,
+                tasks: t.tasks.map(tsk => tsk.id === taskId ? { ...tsk, isComplete: !tsk.isComplete } : tsk)
+            };
+        }
+        return t;
+    }));
+  };
+
+  const addActivity = (event: Omit<Activity, 'id' | 'timestamp' | 'teamId' | 'user'>) => {
+      if (!currentUser) return;
+      const newAct: Activity = {
+          ...event,
+          id: `ACT-${Math.floor(Math.random() * 10000)}`,
+          teamId: currentUser.teamId,
+          user: currentUser.name,
+          timestamp: new Date().toISOString()
+      };
+      setActivities(prev => [newAct, ...prev]);
   };
 
   const addSecurityEvent = async (event: Omit<Activity, 'id' | 'timestamp' | 'type' | 'teamId'>) => {
     if (!currentUser) return;
-    try {
-        await fetch(`${API_BASE}/activities`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...event, teamId: currentUser.teamId })
-        });
-        await refreshData();
-    } catch (err) { console.error(err); }
+    addActivity({ ...event, type: 'security_event' });
   };
 
   const addKBArticle = async (title: string, content: string) => {
     if (!currentUser) return;
-    try {
-        await fetch(`${API_BASE}/kb`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, content })
-        });
-        await refreshData();
-    } catch (err) { console.error(err); }
+    const newKB: KBArticle = {
+        id: `KB-${Math.floor(Math.random() * 10000)}`,
+        title,
+        content
+    };
+    setKnowledgeBase(prev => [newKB, ...prev]);
   };
 
-  // Only keeping this temporarily to not break components that might still call it.
   const switchRole = (role: Role) => {
     if (currentUser) {
-       const updatedUser = { ...currentUser, role };
-       setCurrentUser(updatedUser);
-       localStorage.setItem('stellar_session', JSON.stringify({ user: updatedUser, timestamp: Date.now() }));
+       setCurrentUser({ ...currentUser, role });
     }
   };
 
