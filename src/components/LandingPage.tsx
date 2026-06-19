@@ -238,9 +238,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                 href="https://linkedin.com/in/anthonyccurrie" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', padding: '12px 24px', background: 'rgba(0,122,255,0.1)', border: '1px solid var(--color-primary)', borderRadius: '24px', color: 'white', textDecoration: 'none', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em', transition: 'all 0.3s', boxShadow: '0 0 20px rgba(0,122,255,0.1)' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,122,255,0.2)'; e.currentTarget.style.boxShadow = '0 0 30px rgba(0,122,255,0.3)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,122,255,0.1)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(0,122,255,0.1)'; }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', color: 'white', textDecoration: 'none', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em', transition: 'all 0.3s', textShadow: '0 0 10px rgba(0,122,255,0.5)' }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'var(--color-primary)'; e.currentTarget.style.textShadow = '0 0 20px var(--color-primary)'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'white'; e.currentTarget.style.textShadow = '0 0 10px rgba(0,122,255,0.5)'; }}
             >
                 <LinkedinIcon size={18} color="var(--color-primary)" />
                 CONNECT ON LINKEDIN
