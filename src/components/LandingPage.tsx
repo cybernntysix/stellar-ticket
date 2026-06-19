@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, User, Zap, ArrowLeft, ArrowRight, Lock, FileText, Award, Camera, MonitorPlay, HardDrive } from 'lucide-react';
 import { useTickets, type Role, type Department } from '../context/TicketContext';
@@ -256,7 +257,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                         <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: '5px 0 0 0' }}>SYSTEMS PORTFOLIOS & REPORTS</p>
                     </div>
                 </div>
-                <div className="mobile-grid-fix" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                <div className="mobile-horizontal-gallery" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
                     {PORTFOLIO_DOCS.map(doc => (
                         <button 
                             key={doc.id}
@@ -338,61 +339,64 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
         </div>
         
         {/* DOCUMENT VIEWER MODAL */}
-        <AnimatePresence>
-            {selectedDoc && (
-                <div style={{ position: 'fixed', inset: 0, zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(20px)' }}>
-                    <motion.div 
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        className="glass-panel"
-                        style={{ width: '90vw', height: '90vh', maxWidth: '1200px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
-                    >
-                        <div style={{ padding: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <FileText size={16} color="var(--color-primary)" />
-                                <span style={{ fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em' }}>DOCUMENT VIEWER</span>
-                            </div>
-                            <div style={{ display: 'flex', gap: '15px' }}>
-                                <a href={selectedDoc.pdfUrl} download className="sidebar-btn" style={{ textDecoration: 'none', margin: 0, padding: '8px 16px', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    DOWNLOAD PDF
-                                </a>
-                                <button onClick={() => setSelectedDoc(null)} className="sidebar-btn" style={{ margin: 0, padding: '8px 16px', fontSize: '10px', color: '#FF3B30', borderColor: 'rgba(255,59,48,0.3)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    CLOSE VIEWER
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div style={{ flexGrow: 1, overflowY: 'auto', padding: '40px', background: 'rgba(0,0,0,0.5)' }}>
-                            {selectedDoc.content && selectedDoc.content.length > 0 ? (
-                                <div style={{ maxWidth: '800px', margin: '0 auto', color: 'rgba(255,255,255,0.8)', lineHeight: 1.8, fontSize: '14px' }}>
-                                    <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'white', letterSpacing: '0.1em', marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>{selectedDoc.title}</h3>
-                                    
-                                    {selectedDoc.content.map((section, idx) => (
-                                        <div key={idx} style={{ marginBottom: '40px' }}>
-                                            {section.sectionHeading && <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'white', letterSpacing: '0.1em', marginTop: '50px', marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>{section.sectionHeading}</h3>}
-                                            {section.title && <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '15px' }}>{section.title}</h4>}
-                                            {section.paragraphs.map((p, pIdx) => (
-                                                <p key={pIdx} style={{ marginBottom: '20px' }}>{p}</p>
-                                            ))}
-                                            {section.images && section.images.length > 0 && (
-                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
-                                                    {section.images.map((img, imgIdx) => (
-                                                        <img key={imgIdx} src={img} alt={`Figure ${imgIdx + 1}`} style={{ width: '100%', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }} />
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
+        {createPortal(
+            <AnimatePresence>
+                {selectedDoc && (
+                    <div style={{ position: 'fixed', inset: 0, zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(20px)', color: 'white' }}>
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="glass-panel"
+                            style={{ width: '90vw', height: '90vh', maxWidth: '1200px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+                        >
+                            <div style={{ padding: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <FileText size={16} color="var(--color-primary)" />
+                                    <span style={{ fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em' }}>DOCUMENT VIEWER</span>
                                 </div>
-                            ) : (
-                                <iframe src={selectedDoc.pdfUrl} width="100%" height="100%" style={{ border: 'none', background: 'white', borderRadius: '12px' }} />
-                            )}
-                        </div>
-                    </motion.div>
-                </div>
-            )}
-        </AnimatePresence>
+                                <div style={{ display: 'flex', gap: '20px' }}>
+                                    <a href={selectedDoc.pdfUrl} download style={{ textDecoration: 'none', margin: 0, fontSize: '10px', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 900, letterSpacing: '0.1em' }}>
+                                        DOWNLOAD PDF
+                                    </a>
+                                    <button onClick={() => setSelectedDoc(null)} style={{ background: 'none', border: 'none', margin: 0, fontSize: '10px', color: '#FF3B30', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 900, letterSpacing: '0.1em' }}>
+                                        CLOSE VIEWER
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div style={{ flexGrow: 1, overflowY: 'auto', padding: '40px', background: 'rgba(0,0,0,0.5)' }}>
+                                {selectedDoc.content && selectedDoc.content.length > 0 ? (
+                                    <div style={{ maxWidth: '800px', margin: '0 auto', color: 'rgba(255,255,255,0.8)', lineHeight: 1.8, fontSize: '14px' }}>
+                                        <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'white', letterSpacing: '0.1em', marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>{selectedDoc.title}</h3>
+                                        
+                                        {selectedDoc.content.map((section, idx) => (
+                                            <div key={idx} style={{ marginBottom: '40px' }}>
+                                                {section.sectionHeading && <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'white', letterSpacing: '0.1em', marginTop: '50px', marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px' }}>{section.sectionHeading}</h3>}
+                                                {section.title && <h4 style={{ color: 'var(--color-primary)', fontSize: '16px', fontWeight: 900, marginTop: '30px', marginBottom: '15px' }}>{section.title}</h4>}
+                                                {section.paragraphs.map((p, pIdx) => (
+                                                    <p key={pIdx} style={{ marginBottom: '20px' }}>{p}</p>
+                                                ))}
+                                                {section.images && section.images.length > 0 && (
+                                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
+                                                        {section.images.map((img, imgIdx) => (
+                                                            <img key={imgIdx} src={img} alt={`Figure ${imgIdx + 1}`} style={{ width: '100%', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }} />
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <iframe src={selectedDoc.pdfUrl} width="100%" height="100%" style={{ border: 'none', background: 'white', borderRadius: '12px' }} />
+                                )}
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>,
+            document.body
+        )}
 
         <div style={{ textAlign: 'center', marginTop: '60px', opacity: 0.5 }}>
             <p style={{ fontSize: '10px', letterSpacing: '0.2em', margin: 0 }}>© 2026 ANTHONY CURRIE // PORTFOLIO</p>

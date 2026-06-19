@@ -131,5 +131,80 @@ export const PORTFOLIO_DOCS: PortfolioDocument[] = [
         ]
       }
     ]
+  },
+  {
+    id: 'storage-drive-removal',
+    title: 'STORAGE DRIVE REMOVAL AND RESEARCH',
+    subtitle: 'Hands-on IT hardware lab covering storage drive removal, identification, and research.',
+    pdfUrl: '/assets/dossier/documentation/remove-research-storage/PORTFOLIO Storage Drive Removal and Research.pdf',
+    iconType: 'HardDrive',
+    content: [
+      {
+        title: 'Project Summary',
+        paragraphs: [
+          "For this project, me and my team removed the storage drive from a desktop computer, researched the technical specifications, and reinstalled the drive to make sure the computer returned to its working state. This lab gave me hands-on practice with identifying storage devices, safely removing hardware, documenting specifications, and verifying the system after reinstalling the component."
+        ]
+      },
+      {
+        title: 'System / Device & Objective',
+        paragraphs: [
+          "System: Break/fix desktop computer (DELL)",
+          "Storage type: SSD using SATA interface",
+          "Storage drive identified: KingFast F110 258GB",
+          "Objective: The goal of this project was to remove the storage drive from the computer, identify the device type and specifications, reinstall the drive, and verify that the system still worked afterward."
+        ],
+        images: [
+           '/assets/dossier/documentation/remove-research-storage/page_08_image_04.png'
+        ]
+      },
+      {
+        title: 'Work Performed',
+        paragraphs: [
+          "I started by taking the break/fix desktop computer out of storage and placing it on the workbench. Before opening the system, I connected the monitor, keyboard, mouse, and power cable to verify the computer’s status. The computer was able to turn on, so I powered it back off and disconnected the power cable and external cables before working inside the case. I used anti-static precautions before opening the computer because internal components can be damaged by static electricity.",
+          "After opening the case, I inspected the inside of the desktop and identified the storage device. The computer had 1 storage device installed, which was an SSD using a SATA interface. I located the drive inside the case and identified how it was secured. I removed the storage device from the case and placed it in my work area.",
+          "After removing the drive, I documented it with photos and identified the model as a KingFast F110 258GB SSD. I researched the storage drive’s technical specifications, including the device type, form factor, capacity, memory type, read speed, write speed, interface type, voltage, size, weight, and power consumption. After documenting the drive information, I reinstalled the storage device back into the computer. I made sure the drive was secured properly and that the SATA data and power connections were connected correctly.",
+          "Before powering the system back on, I checked the inside of the case to make sure the storage drive was installed correctly, cables were connected, and nothing was loose. Then I connected the monitor, keyboard, mouse, and power cable again and powered the computer on to verify the system returned to its working state."
+        ],
+        images: [
+          '/assets/dossier/documentation/remove-research-storage/page_15_image_07.png'
+        ]
+      },
+      {
+        title: 'Storage Specifications Researched',
+        paragraphs: [
+          "• Internal Solid State Drive + Form factor: 2.5 inch + Interface type: SATA 3.0",
+          "• Capacity: 128GB",
+          "• Memory type: MLC",
+          "• Backward compatibility: SATA 2 and SATA 1",
+          "• Read speed: 500–560 MB/s + Write speed: 420–460 MB/s",
+          "• Operating voltage: 5V ± 5%",
+          "• Size: 10 × 7 × 0.7 cm + Weight: 50 g",
+          "• Idle power consumption: 0.3W + Active power consumption: 2W"
+        ]
+      },
+      {
+        title: 'Troubleshooting / Quality Checks',
+        paragraphs: [
+          "• Verified the computer powered on before starting the hardware work.",
+          "• Disconnected the power cable and external cables before opening the case.",
+          "• Used anti-static precautions before handling internal components.",
+          "• Confirmed how many storage devices were installed in the computer.",
+          "• Identified the storage type as a SATA SSD.",
+          "• Checked that the drive was properly secured when reinstalling it.",
+          "• Made sure the SATA data and power cables were connected correctly.",
+          "• Checked the inside of the case before powering the system back on.",
+          "• Verified the computer returned to a working state after the storage drive was reinstalled."
+        ],
+        images: [
+          '/assets/dossier/documentation/remove-research-storage/page_17_image_08.png'
+        ]
+      },
+      {
+        title: 'Result',
+        paragraphs: [
+          "The storage drive was removed, researched, documented, and reinstalled successfully. The computer was checked afterward to make sure it returned to its working state. This project helped me get more comfortable with SATA SSDs, storage device identification, cable connections, hardware research, and post repair verification."
+        ]
+      }
+    ]
   }
 ];
