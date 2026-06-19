@@ -185,16 +185,31 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
   }
 
   return (
-    <div style={{
-      position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0, 0, 0, 0.4)',
-      backdropFilter: 'blur(10px)',
-      zIndex: 100,
-      display: 'flex', flexDirection: 'column',
-      color: 'white',
-      overflowY: 'auto',
-      padding: '60px 20px'
-    }}>
+    <>
+        {/* Subtle Blurred Background */}
+        <div style={{
+            position: 'fixed',
+            top: '-50px', left: '-50px', right: '-50px', bottom: '-50px',
+            backgroundImage: 'url(/assets/backgrounds/background.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(30px) brightness(0.6)',
+            opacity: 0.8,
+            zIndex: 90,
+            pointerEvents: 'none'
+        }} />
+
+        <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0, 0, 0, 0.2)',
+            backdropFilter: 'blur(10px)',
+            zIndex: 100,
+            display: 'flex', flexDirection: 'column',
+            color: 'white',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            padding: '60px 20px'
+        }}>
         {/* HERO HEADER */}
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -402,6 +417,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
             <p style={{ fontSize: '10px', letterSpacing: '0.2em', margin: 0 }}>© 2026 ANTHONY CURRIE // PORTFOLIO</p>
         </div>
     </div>
+    </>
   );
 };
 
