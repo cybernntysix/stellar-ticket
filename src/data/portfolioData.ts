@@ -16,6 +16,88 @@ export interface PortfolioDocument {
 
 export const PORTFOLIO_DOCS: PortfolioDocument[] = [
   {
+    id: 'razer-blade-stealth-diagnostics',
+    title: 'RAZER BLADE STEALTH DIAGNOSTICS',
+    subtitle: 'Complete Troubleshooting & Diagnostic Log for Razer Blade Stealth 13 (RZ09-02810E71).',
+    pdfUrl: '/assets/dossier/documentation/razer-battery-replacement-VRM-diagnostics/PORTFOLIO Razer_Blade_Stealth_Full_Troubleshooting_Log.pdf',
+    iconType: 'MonitorPlay',
+    content: [
+      {
+        title: 'Background',
+        paragraphs: ["I replaced the original swollen battery after the laptop had been dead for several years. The objective was to determine whether the failure was limited to the battery or if the motherboard had also been damaged."]
+      },
+      {
+        title: 'Step 1 - Battery Replacement',
+        paragraphs: ["Installed a brand-new RC30-0281 battery. Verified the connector orientation and fully seated the battery connector. Pressing the power button produced no fan spin, LEDs, keyboard backlight, or display."]
+      },
+      {
+        title: 'Step 2 - Charger Verification',
+        paragraphs: ["Verified the USB-C PD charger was a 100 W model capable of supplying 20 V. This ruled out using an underpowered adapter."],
+        images: ['/assets/dossier/documentation/razer-battery-replacement-VRM-diagnostics/page_1_image_1.png']
+      },
+      {
+        title: 'Step 3 - Internal Inspection',
+        paragraphs: ["Removed the bottom cover and identified the battery connector, USB-C charging circuitry, embedded controller (ITE IT8390E-256), VRM components, inductors marked R010 and 1R5, heatsink assembly, and the NVMe SSD."],
+        images: ['/assets/dossier/documentation/razer-battery-replacement-VRM-diagnostics/page_2_image_1.jpeg']
+      },
+      {
+        title: 'Step 4 - Continuity / Ground Checks',
+        paragraphs: ["Confirmed chassis ground using screw holes and USB-C shield. This established reliable reference points for voltage measurements."]
+      },
+      {
+        title: 'Step 5 - Battery Rail Measurements',
+        paragraphs: ["Measured approximately 11.73 V on the battery power rail at the R010 current-sense resistors. This confirmed the replacement battery was actually delivering voltage into the motherboard."],
+        images: ['/assets/dossier/documentation/razer-battery-replacement-VRM-diagnostics/page_3_image_1.png']
+      },
+      {
+        title: 'Step 6 - USB-C Input Measurements',
+        paragraphs: ["Measured approximately 19 V on the USB-C power input, confirming successful USB-C Power Delivery negotiation and that charger voltage reached the motherboard."],
+        images: ['/assets/dossier/documentation/razer-battery-replacement-VRM-diagnostics/page_3_image_2.png']
+      },
+      {
+        title: 'Step 7 - Power Rail Investigation',
+        paragraphs: ["Probed downstream VRM components around the 1R5 inductors. Readings fluctuated between roughly 2.5 V, 4.4 V, and higher values before collapsing back to 0 V. These unstable readings indicate the power-management circuitry repeatedly attempted to start before shutting itself down."],
+        images: [
+          '/assets/dossier/documentation/razer-battery-replacement-VRM-diagnostics/page_4_image_1.jpeg',
+          '/assets/dossier/documentation/razer-battery-replacement-VRM-diagnostics/page_4_image_2.jpeg'
+        ]
+      },
+      {
+        title: 'Step 8 - Embedded Controller',
+        paragraphs: ["Measured around the ITE embedded controller. No obvious operating voltage was found on accessible pins, although probing the fine-pitch pins was limited to avoid accidental shorts."]
+      },
+      {
+        title: 'Step 9 - Thermal Findings',
+        paragraphs: ["The 4R39/02CAB power component became noticeably warm while the system remained completely dead. Heat generation confirms current flow into at least part of the VRM/power stage."],
+        images: ['/assets/dossier/documentation/razer-battery-replacement-VRM-diagnostics/page_4_image_3.jpeg']
+      },
+      {
+        title: 'Step 10 - SSD Identification',
+        paragraphs: ["Identified the internal storage as an M.2 NVMe SSD. This drive can be removed and installed in an external USB enclosure to recover files if the motherboard is beyond repair."],
+        images: ['/assets/dossier/documentation/razer-battery-replacement-VRM-diagnostics/page_5_image_1.jpeg']
+      },
+      {
+        title: 'Assessment',
+        paragraphs: ["The evidence collected tells me that I don’t have a failed battery or charger. Battery voltage reaches the motherboard, USB-C negotiates correctly, and portions of the power show voltages. The unstable VRM outputs together with the warm power stage strongly suggest a motherboard-level failure involving the power-management circuitry, or a shorted downstream rail. I realize that the swollen battery could have caused this from the bulging it created while it was swollen."]
+      },
+      {
+        title: 'Skills Demonstrated',
+        paragraphs: [
+          "• Safe laptop disassembly",
+          "• Battery replacement",
+          "• Connector identification",
+          "• Multimeter use",
+          "• DC voltage tracing",
+          "• USB-C verification",
+          "• VRM troubleshooting",
+          "• Power rail analysis",
+          "• Component identification",
+          "• NVMe SSD removal planning"
+        ]
+      }
+    ]
+  },
+  {
     id: 'ticketing-systems',
     title: 'TICKETING SYSTEMS PORTFOLIO',
     subtitle: 'A comprehensive breakdown of enterprise ticketing architectures, workflows, and SLA management.',
